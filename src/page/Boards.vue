@@ -1,5 +1,5 @@
 <template>
-  <SearchBar :categories="state.categories"/>
+  <SearchBar/>
   <div class="boards text-center">
     <table class="table center table-hover" style="max-width: 1280px;">
       <thead class="thead-dark">
@@ -14,7 +14,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(item, idx) in state.boards" :key="idx">
+      <tr v-for="(item, idx) in $store.state.boards" :key="idx">
         <td class="col-md-1">{{ item.categoryIdx }}</td>
         <td class="col-md-1"> O</td>
         <td class="col-md-4">
@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import {reactive} from "vue";
 import axios from "axios";
 import Pagination from "@/components/Pagination.vue";
 import SearchBar from "@/components/SearchBar.vue";
@@ -45,25 +44,20 @@ export default {
   name: "Boards",
   components: {SearchBar, Pagination},
   setup() {
-    const state = reactive({
-      boards: [],
-      categories: [],
-    })
 
     const params = generateSearchParams(store.state.searchCondition);
     axios.get("/api/boards", {params}).then(({data}) => {
-      state.boards = data;
+      store.commit('setBoards', data);
     });
 
     axios.get("/api/categories").then(({data}) => {
-      state.categories = data.map(category => ({
+      const categories = data.map(category => ({
         categoryIdx: category.categoryIdx,
         code: category.code,
         name: category.name
       }));
+      store.commit('setCategories', categories);
     });
-
-    return {state};
   }
 
 }

@@ -9,7 +9,7 @@
         <select class="form-select me-2" v-model="searchCondition.categoryIdx" aria-label="Default select example"
                 style="max-width: 150px;">
           <option value="0" selected>모든 카테고리</option>
-          <option v-for="category in categories" :value="category.categoryIdx" :key="category.categoryIdx">
+          <option v-for="category in $store.state.categories" :value="category.categoryIdx" :key="category.categoryIdx">
             {{ category.name }}
           </option>
         </select>
@@ -24,6 +24,8 @@
 <script>
 import { reactive } from "vue";
 import store from "@/script/store";
+import {generateSearchParams} from "@/script/searchCondition";
+import axios from "axios";
 
 export default {
   name: "SearchBar",
@@ -42,6 +44,15 @@ export default {
       store.commit('setEndDate', endDate);
       store.commit('setCategoryIdx', categoryIdx);
       store.commit('setKeyword', keyword);
+      sessionStorage.setItem("startDate", startDate);
+      sessionStorage.setItem("endDate", endDate);
+      sessionStorage.setItem("categoryIdx", categoryIdx);
+      sessionStorage.setItem("keyword", keyword);
+
+      const params = generateSearchParams(store.state.searchCondition);
+      axios.get("/api/boards", {params}).then(({data}) => {
+        store.commit('setBoards', data);
+      });
     };
 
     return { searchCondition, search };

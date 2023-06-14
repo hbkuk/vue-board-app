@@ -9,6 +9,8 @@ const store = createStore({
                 categoryIdx: "0",
                 keyword: ""
             },
+            boards: [],
+            categories: [],
         }
     },
     mutations: {
@@ -23,6 +25,12 @@ const store = createStore({
         },
         setKeyword(state, payload) {
             state.searchCondition.keyword = payload;
+        },
+        setBoards(state, payload) {
+            state.boards = payload;
+        },
+        setCategories(state, payload) {
+            state.categories = payload;
         }
     }
 })
