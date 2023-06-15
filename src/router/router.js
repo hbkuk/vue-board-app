@@ -8,7 +8,7 @@ import DeleteBoard from "@/page/DeleteBoard.vue";
 const routes = [
     {path: '/', component: Home},
     {path: '/boards', component: Boards},
-    {path: '/board/:id', component: Board},
+    {path: '/board/:boardIdx', component: Board},
     {path: '/board/modify', component: UpdateBoard},
     {path: '/board/delete', component: DeleteBoard},
 ]
