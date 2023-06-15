@@ -47,11 +47,6 @@ export default {
       store.commit('setCategoryIdx', categoryIdx);
       store.commit('setKeyword', keyword);
       store.commit('setPageNo', pageNo);
-      sessionStorage.setItem("startDate", startDate);
-      sessionStorage.setItem("endDate", endDate);
-      sessionStorage.setItem("categoryIdx", categoryIdx);
-      sessionStorage.setItem("keyword", keyword);
-      sessionStorage.setItem("pageNo", pageNo);
 
       const params = generateSearchParams(store.state.searchCondition);
       axios.get("/api/boards", {params}).then(({data}) => {
@@ -66,11 +61,6 @@ export default {
       store.commit('setCategoryIdx', "0");
       store.commit('setKeyword', "");
       store.commit('setPageNo', "");
-      sessionStorage.removeItem("startDate");
-      sessionStorage.removeItem("endDate");
-      sessionStorage.removeItem("categoryIdx");
-      sessionStorage.removeItem("keyword");
-      sessionStorage.removeItem("pageNo");
 
       const params = generateSearchParams(store.state.searchCondition);
       axios.get("/api/boards", {params}).then(({data}) => {

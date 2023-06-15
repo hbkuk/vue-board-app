@@ -7,6 +7,7 @@
 <script>
 import Footer from "@/components/Footer.vue";
 import Header from "@/components/Header.vue";
+import {onBeforeMount} from "vue";
 import store from "@/script/store";
 
 export default {
@@ -16,23 +17,28 @@ export default {
     Header
   },
   setup() {
-    const startDate = sessionStorage.getItem("startDate");
-    const endDate = sessionStorage.getItem("endDate");
-    const categoryIdx = sessionStorage.getItem("categoryIdx");
-    const keyword = sessionStorage.getItem("keyword");
+    onBeforeMount(() => {
+      // 컴포넌트가 마운트되기 전에 실행되는 로직
+      
+      const startDate = sessionStorage.getItem("startDate");
+      const endDate = sessionStorage.getItem("endDate");
+      const categoryIdx = sessionStorage.getItem("categoryIdx");
+      const keyword = sessionStorage.getItem("keyword");
 
-    if (startDate) {
-      store.commit('setStartDate', startDate);
-    }
-    if (endDate) {
-      store.commit('setEndDate', endDate);
-    }
-    if (categoryIdx) {
-      store.commit('setCategoryIdx', categoryIdx);
-    }
-    if(keyword) {
-      store.commit('setKeyword', keyword);
-    }
-  }
+      if (startDate) {
+        store.commit('setStartDate', startDate);
+      }
+      if (endDate) {
+        store.commit('setEndDate', endDate);
+      }
+      if (categoryIdx) {
+        store.commit('setCategoryIdx', categoryIdx);
+      }
+      if(keyword) {
+        store.commit('setKeyword', keyword);
+      }
+
+    });
+  },
 }
 </script>

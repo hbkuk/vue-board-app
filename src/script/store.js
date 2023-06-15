@@ -19,15 +19,23 @@ const store = createStore({
     mutations: {
         setStartDate(state, payload) {
             state.searchCondition.startDate = payload;
+            sessionStorage.setItem("startDate", payload);
         },
         setEndDate(state, payload) {
             state.searchCondition.endDate = payload;
+            sessionStorage.setItem("endDate", payload);
         },
         setCategoryIdx(state, payload) {
             state.searchCondition.categoryIdx = payload;
+            sessionStorage.setItem("categoryIdx", payload);
         },
         setKeyword(state, payload) {
             state.searchCondition.keyword = payload;
+            sessionStorage.setItem("keyword", payload);
+        },
+        setPageNo(state, payload) {
+            state.searchCondition.pageNo = payload;
+            sessionStorage.setItem("pageNo", payload);
         },
         setBoards(state, payload) {
             state.boards = payload;
@@ -35,13 +43,10 @@ const store = createStore({
         setPagination(state, payload) {
             state.pagination = payload;
         },
-        setPageNo(state, payload) {
-            state.searchCondition.pageNo = payload;
-        },
         setCategories(state, payload) {
             state.categories = payload;
         }
-    }
+    },
 })
 
 export default store;
