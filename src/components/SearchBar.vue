@@ -15,7 +15,8 @@
         </select>
         <input class="form-control me-2" type="text" v-model="searchCondition.keyword" placeholder="게시글 검색"
                style="max-width: 300px;">
-        <button class="btn btn-primary text-nowrap" @click="search">검색</button>
+        <button class="btn btn-primary text-nowrap" @click="search">검색</button>&nbsp;
+        <button class="btn btn-danger text-nowrap" @click="searchReset">검색 초기화</button>
       </div>
     </div>
   </div>
@@ -26,6 +27,7 @@ import { reactive } from "vue";
 import store from "@/script/store";
 import {generateSearchParams} from "@/script/searchCondition";
 import axios from "axios";
+import lib from "@/script/lib";
 
 export default {
   name: "SearchBar",
@@ -39,23 +41,45 @@ export default {
     const searchCondition = reactive(store.state.searchCondition);
 
     const search = () => {
-      const { startDate, endDate, categoryIdx, keyword } = searchCondition;
+      const { startDate, endDate, categoryIdx, keyword, pageNo } = searchCondition;
       store.commit('setStartDate', startDate);
       store.commit('setEndDate', endDate);
       store.commit('setCategoryIdx', categoryIdx);
       store.commit('setKeyword', keyword);
+      store.commit('setPageNo', pageNo);
       sessionStorage.setItem("startDate", startDate);
       sessionStorage.setItem("endDate", endDate);
       sessionStorage.setItem("categoryIdx", categoryIdx);
       sessionStorage.setItem("keyword", keyword);
+      sessionStorage.setItem("pageNo", pageNo);
 
       const params = generateSearchParams(store.state.searchCondition);
       axios.get("/api/boards", {params}).then(({data}) => {
-        store.commit('setBoards', data);
+        store.commit('setBoards', data.boards);
+        store.commit('setPagination', data.pagination);
       });
     };
 
-    return { searchCondition, search };
+    const searchReset = () => {
+      store.commit('setStartDate', lib.getPastDate(365));
+      store.commit('setEndDate', lib.getCurrentDate());
+      store.commit('setCategoryIdx', "0");
+      store.commit('setKeyword', "");
+      store.commit('setPageNo', "");
+      sessionStorage.removeItem("startDate");
+      sessionStorage.removeItem("endDate");
+      sessionStorage.removeItem("categoryIdx");
+      sessionStorage.removeItem("keyword");
+      sessionStorage.removeItem("pageNo");
+
+      const params = generateSearchParams(store.state.searchCondition);
+      axios.get("/api/boards", {params}).then(({data}) => {
+        store.commit('setBoards', data.boards);
+        store.commit('setPagination', data.pagination);
+      });
+    }
+
+    return { searchCondition, search, searchReset };
   },
 };
 </script>

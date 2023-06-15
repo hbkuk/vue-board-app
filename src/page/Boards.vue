@@ -15,7 +15,7 @@
       </thead>
       <tbody>
       <tr v-for="(item, idx) in $store.state.boards" :key="idx">
-        <td class="col-md-1">{{ item.categoryIdx }}</td>
+        <td class="col-md-1">{{ item.categoryName }}</td>
         <td class="col-md-1"> O</td>
         <td class="col-md-4">
           <router-link class="text-decoration-none text-dark font-weight-bold" :to="`/board/${item.boardIdx}`">
@@ -47,7 +47,8 @@ export default {
 
     const params = generateSearchParams(store.state.searchCondition);
     axios.get("/api/boards", {params}).then(({data}) => {
-      store.commit('setBoards', data);
+      store.commit('setBoards', data.boards);
+      store.commit('setPagination', data.pagination);
     });
 
     axios.get("/api/categories").then(({data}) => {

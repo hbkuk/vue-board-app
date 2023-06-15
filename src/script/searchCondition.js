@@ -17,5 +17,9 @@ export const generateSearchParams = (searchCondition) => {
         params.keyword = searchCondition.keyword;
     }
 
+    if (searchCondition.pageNo) {
+        params.pageNo = searchCondition.pageNo;
+    }
+
     return params;
 };

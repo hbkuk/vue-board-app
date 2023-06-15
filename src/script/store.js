@@ -1,15 +1,18 @@
 import {createStore} from 'vuex'
+import lib from "@/script/lib";
 
 const store = createStore({
     state() {
         return {
             searchCondition: {
-                startDate: "",
-                endDate: "",
+                startDate: lib.getPastDate(365),
+                endDate: lib.getCurrentDate(),
                 categoryIdx: "0",
-                keyword: ""
+                keyword: "",
+                pageNo: "",
             },
             boards: [],
+            pagination: {},
             categories: [],
         }
     },
@@ -28,6 +31,12 @@ const store = createStore({
         },
         setBoards(state, payload) {
             state.boards = payload;
+        },
+        setPagination(state, payload) {
+            state.pagination = payload;
+        },
+        setPageNo(state, payload) {
+            state.searchCondition.pageNo = payload;
         },
         setCategories(state, payload) {
             state.categories = payload;
