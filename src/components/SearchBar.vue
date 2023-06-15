@@ -9,7 +9,7 @@
         <select class="form-select me-2" v-model="searchCondition.categoryIdx" aria-label="Default select example"
                 style="max-width: 150px;">
           <option value="0" selected>모든 카테고리</option>
-          <option v-for="category in $store.state.categories" :value="category.categoryIdx" :key="category.categoryIdx">
+          <option v-for="category in categories" :value="category.categoryIdx" :key="category.categoryIdx">
             {{ category.name }}
           </option>
         </select>
@@ -25,51 +25,49 @@
 <script>
 import { reactive } from "vue";
 import store from "@/script/store";
-import {generateSearchParams} from "@/script/searchCondition";
-import axios from "axios";
 import lib from "@/script/lib";
+import DataService from "@/service/DataService";
+import router from "@/router/router";
+import storeHelper from "@/script/storeHelper";
 
 export default {
   name: "SearchBar",
-  props: {
-    categories: {
-      type: Array,
-      required: true,
+  computed: {
+    categories() {
+      return store.getters.getCategories;
     },
   },
   setup() {
     const searchCondition = reactive(store.state.searchCondition);
 
-    const search = () => {
-      const { startDate, endDate, categoryIdx, keyword, pageNo } = searchCondition;
-      store.commit('setStartDate', startDate);
-      store.commit('setEndDate', endDate);
-      store.commit('setCategoryIdx', categoryIdx);
-      store.commit('setKeyword', keyword);
-      store.commit('setPageNo', pageNo);
+    const fetchData = () => {
+      DataService.fetchBoards(store.state.searchCondition)
+          .then((res) => {
+            store.commit("setBoards", res.boards);
+            store.commit("setPagination", res.pagination);
+          })
+          .catch((error) => {
+            console.error("Failed to fetch boards:", error);
+            router.push("/error");
+          });
+    };
 
-      const params = generateSearchParams(store.state.searchCondition);
-      axios.get("/api/boards", {params}).then(({data}) => {
-        store.commit('setBoards', data.boards);
-        store.commit('setPagination', data.pagination);
-      });
+    const search = () => {
+      const searchCondition = store.state.searchCondition;
+      searchCondition.pageNo = 1;
+      storeHelper.commitSearchConditionToStore(searchCondition);
+
+      fetchData();
     };
 
     const searchReset = () => {
-      store.commit('setStartDate', lib.getPastDate(365));
-      store.commit('setEndDate', lib.getCurrentDate());
-      store.commit('setCategoryIdx', "0");
-      store.commit('setKeyword', "");
-      store.commit('setPageNo', "");
+      storeHelper.defaultSearchConditionToStore();
 
-      const params = generateSearchParams(store.state.searchCondition);
-      axios.get("/api/boards", {params}).then(({data}) => {
-        store.commit('setBoards', data.boards);
-        store.commit('setPagination', data.pagination);
-      });
-    }
+      fetchData();
+    };
 
     return { searchCondition, search, searchReset };
   },
 };
 </script>
+

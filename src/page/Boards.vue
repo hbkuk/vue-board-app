@@ -14,7 +14,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(item, idx) in $store.state.boards" :key="idx">
+      <tr v-for="(item, idx) in boards" :key="idx">
         <td class="col-md-1">{{ item.categoryName }}</td>
         <td class="col-md-1"> O</td>
         <td class="col-md-4">
@@ -34,36 +34,53 @@
 </template>
 
 <script>
-import axios from "axios";
 import Pagination from "@/components/Pagination.vue";
 import SearchBar from "@/components/SearchBar.vue";
+import DataService from "@/service/DataService";
 import store from "@/script/store";
-import {generateSearchParams} from "@/script/searchCondition";
+import router from "@/router/router";
+import queryStringUtils from "@/script/queryStringHelper";
 
 export default {
   name: "Boards",
+  computed: {
+    boards() {
+      return store.getters.getBoards;
+    }
+  },
   components: {SearchBar, Pagination},
-  setup() {
+  created() {
+    this.fetchData();
+  },
+  methods: {
+    fetchData() {
 
-    const params = generateSearchParams(store.state.searchCondition);
-    axios.get("/api/boards", {params}).then(({data}) => {
-      store.commit('setBoards', data.boards);
-      store.commit('setPagination', data.pagination);
-    });
+      const searchCondition = this.$store.state.searchCondition;
+      queryStringUtils.updateSearchConditionWithQueryParams(router.currentRoute.value.query, searchCondition);
 
-    axios.get("/api/categories").then(({data}) => {
-      const categories = data.map(category => ({
-        categoryIdx: category.categoryIdx,
-        code: category.code,
-        name: category.name
-      }));
-      store.commit('setCategories', categories);
-    });
+      DataService.fetchBoards(searchCondition)
+          .then((res) => {
+            store.commit("setBoards", res.boards);
+            store.commit("setPagination", res.pagination);
+          })
+          .catch(error => {
+            console.error("Failed to fetch data:", error);
+            router.push("/error");
+          });
+
+      DataService.fetchCategories()
+          .then((res) => {
+            store.commit("setCategories", res.categories);
+          })
+          .catch(error => {
+            console.error("Failed to fetch categories:", error);
+            router.push("/error");
+          });
+    }
   }
-
-}
-
+};
 </script>
+
 
 <style scoped>
 .center {
