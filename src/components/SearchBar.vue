@@ -2,47 +2,61 @@
   <div class="container">
     <div class="row">
       <div class="col-3 d-flex justify-content-start">
-        <input class="currentDate" type="date" v-model="searchCondition.startDate" placeholder="시작 날짜" /> &nbsp;
-        <input class="currentDate" type="date" v-model="searchCondition.endDate" placeholder="끝 날짜" />
+        <input class="currentDate" type="date" v-model="startDate" placeholder="시작 날짜"/> &nbsp;
+        <input class="currentDate" type="date" v-model="endDate" placeholder="끝 날짜"/>
       </div>
       <div class="col-9 d-flex justify-content-end">
-        <select class="form-select me-2" v-model="searchCondition.categoryIdx" aria-label="Default select example"
+        <select class="form-select me-2" v-model="categoryIdx" aria-label="Default select example"
                 style="max-width: 150px;">
           <option value="0" selected>모든 카테고리</option>
           <option v-for="category in categories" :value="category.categoryIdx" :key="category.categoryIdx">
             {{ category.name }}
           </option>
         </select>
-        <input class="form-control me-2" type="text" v-model="searchCondition.keyword" placeholder="게시글 검색"
+        <input class="form-control me-2" type="text" v-model="keyword" placeholder="게시글 검색"
                style="max-width: 300px;">
         <button class="btn btn-primary text-nowrap" @click="search">검색</button>&nbsp;
-        <button class="btn btn-danger text-nowrap" @click="searchReset">검색 초기화</button>
+        <button class="btn btn-danger text-nowrap" @click="cleanSearch">검색 초기화</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { reactive } from "vue";
+import {mapMutations, mapState} from "vuex";
 import store from "@/script/store";
-import lib from "@/script/lib";
+import queryHelper from "@/script/queryHelper";
 import DataService from "@/service/DataService";
 import router from "@/router/router";
-import storeHelper from "@/script/storeHelper";
+import lib from "@/script/lib";
 
 export default {
   name: "SearchBar",
-  computed: {
-    categories() {
-      return store.getters.getCategories;
-    },
+  data() {
+    return {
+      startDate: '',
+      endDate: '',
+      categoryIdx: '',
+      keyword: '',
+    };
   },
-  setup() {
-    const searchCondition = reactive(store.state.searchCondition);
-
-    const fetchData = () => {
-      DataService.fetchBoards(store.state.searchCondition)
+  created() {
+    // 랜더링 되기 전에 전역 저장소의 searchCondition 값을 가져와 data에 설정합니다.
+    const searchCondition = store.state.searchCondition;
+    this.startDate = searchCondition.startDate;
+    this.endDate = searchCondition.endDate;
+    this.categoryIdx = searchCondition.categoryIdx;
+    this.keyword = searchCondition.keyword;
+  },
+  computed: {
+    ...mapState(['categories']),
+  },
+  methods: {
+    ...mapMutations(['updateSearchCondition']),
+    fetchBoard(query) {
+      DataService.fetchBoards(query)
           .then((res) => {
+            this.updateSearchCondition(query);
             store.commit("setBoards", res.boards);
             store.commit("setPagination", res.pagination);
           })
@@ -50,23 +64,27 @@ export default {
             console.error("Failed to fetch boards:", error);
             router.push("/error");
           });
-    };
+    },
+    search() {
+      let searchCondition = {
+        startDate: this.startDate,
+        endDate: this.endDate,
+        categoryIdx: this.categoryIdx,
+        keyword: this.keyword
+      }
 
-    const search = () => {
-      const searchCondition = store.state.searchCondition;
-      searchCondition.pageNo = 1;
-      storeHelper.commitSearchConditionToStore(searchCondition);
+      const filteredQuery = queryHelper.filteredSearchConditionParams(searchCondition);
+      this.fetchBoard(filteredQuery);
+    },
+    cleanSearch() {
+      this.startDate = lib.getPastDate(365);
+      this.endDate = lib.getCurrentDate();
+      this.categoryIdx = 0;
+      this.keyword = null;
 
-      fetchData();
-    };
-
-    const searchReset = () => {
-      storeHelper.defaultSearchConditionToStore();
-
-      fetchData();
-    };
-
-    return { searchCondition, search, searchReset };
+      let searchCondition = null;
+      this.fetchBoard(queryHelper.filteredSearchConditionParams(searchCondition));
+    },
   },
 };
 </script>

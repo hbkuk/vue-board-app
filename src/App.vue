@@ -9,7 +9,7 @@ import {onBeforeMount} from 'vue';
 import store from '@/script/store';
 import Footer from "@/components/Footer.vue";
 import Header from "@/components/Header.vue";
-import storeHelper from "@/script/storeHelper";
+import queryHelper from "@/script/queryHelper";
 
 /**
  * 애플리케이션의 진입점인 App 컴포넌트입니다.
@@ -27,11 +27,10 @@ export default {
      * @param {Function} commitFn - 스토어 커밋을 위한 함수
      */
     onBeforeMount(() => {
-      storeHelper.loadSearchCondition('startDate', (value) => store.commit('setStartDate', value));
-      storeHelper.loadSearchCondition('endDate', (value) => store.commit('setEndDate', value));
-      storeHelper.loadSearchCondition('categoryIdx', (value) => store.commit('setCategoryIdx', value));
-      storeHelper.loadSearchCondition('keyword', (value) => store.commit('setKeyword', value));
-      storeHelper.loadSearchCondition('pageNo', (value) => store.commit('setPageNo', value));
+      const serializedSearchCondition = sessionStorage.getItem('searchCondition');
+      if (serializedSearchCondition) {
+        store.commit('updateSearchCondition', queryHelper.parseSearchConditionParams(store.state.searchCondition, JSON.parse(serializedSearchCondition)))
+      }
     });
   },
 };

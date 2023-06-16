@@ -28,24 +28,29 @@
 import store from "@/script/store";
 import DataService from "@/service/DataService";
 import router from "@/router/router";
+import {mapMutations, mapState} from "vuex";
+import queryHelper from "@/script/queryHelper";
 
 export default {
   name: 'Pagination',
   computed: {
-    pagination() {
-      return this.$store.state.pagination;
-    },
+    ...mapState(['pagination']),
     filteredPages() {
       const { startPage, endPage, maxPage } = this.pagination;
       return Array.from({ length: Math.min(endPage, maxPage) - startPage + 1 }, (_, index) => startPage + index);
     },
   },
   methods: {
+    ...mapMutations(['updateSearchCondition']),
     change(direction) {
-      const pageNo = direction === "prev" ? this.pagination.pageNo - 1 : direction === "next" ? this.pagination.pageNo + 1 : direction;
-      store.commit("setPageNo", pageNo);
-      DataService.fetchBoards(store.state.searchCondition)
+      const searchCondition = store.state.searchCondition;
+      searchCondition.pageNo = direction === "prev" ? this.pagination.pageNo - 1 : direction === "next" ? this.pagination.pageNo + 1 : direction;
+
+      const filteredQuery = queryHelper.filteredSearchConditionParams(searchCondition);
+
+      DataService.fetchBoards(filteredQuery)
           .then((res) => {
+            this.updateSearchCondition(filteredQuery);
             store.commit("setBoards", res.boards);
             store.commit("setPagination", res.pagination);
           })

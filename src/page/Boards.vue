@@ -14,18 +14,18 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(item, idx) in boards" :key="idx">
-        <td class="col-md-1">{{ item.categoryName }}</td>
+      <tr v-for="(board, index) in boards" :key="index">
+        <td class="col-md-1">{{ board.categoryName }}</td>
         <td class="col-md-1"> O</td>
         <td class="col-md-4">
-          <router-link class="text-decoration-none text-dark font-weight-bold" :to="`/board/${item.boardIdx}`">
-            {{ item.title }}
+          <router-link class="text-decoration-none text-dark font-weight-bold" :to="`/board/${board.boardIdx}`">
+            {{ board.title }}
           </router-link>
         </td>
-        <td class="col-md-1">{{ item.writer }}</td>
-        <td class="col-md-1">{{ item.hit }}</td>
-        <td class="col-md-2">{{ item.regDate }}</td>
-        <td class="col-md-2">{{ item.modDate }}</td>
+        <td class="col-md-1">{{ board.writer }}</td>
+        <td class="col-md-1">{{ board.hit }}</td>
+        <td class="col-md-2">{{ board.regDate }}</td>
+        <td class="col-md-2">{{ board.modDate }}</td>
       </tr>
       </tbody>
     </table>
@@ -39,27 +39,28 @@ import SearchBar from "@/components/SearchBar.vue";
 import DataService from "@/service/DataService";
 import store from "@/script/store";
 import router from "@/router/router";
-import queryStringUtils from "@/script/queryStringHelper";
+import { mapState, mapMutations } from "vuex";
+import queryHelper from "@/script/queryHelper";
 
 export default {
   name: "Boards",
   computed: {
-    boards() {
-      return store.getters.getBoards;
-    }
+    ...mapState( ['boards', 'searchCondition'] ),
   },
   components: {SearchBar, Pagination},
   created() {
     this.fetchData();
   },
   methods: {
+    ...mapMutations(['updateSearchCondition']),
     fetchData() {
 
-      const searchCondition = this.$store.state.searchCondition;
-      queryStringUtils.updateSearchConditionWithQueryParams(router.currentRoute.value.query, searchCondition);
+      const parsedQuery = queryHelper.parseSearchConditionParams(this.searchCondition, router.currentRoute.value.query);
+      const filteredQuery = queryHelper.filteredSearchConditionParams(parsedQuery);
 
-      DataService.fetchBoards(searchCondition)
+      DataService.fetchBoards(filteredQuery)
           .then((res) => {
+            this.updateSearchCondition(filteredQuery);
             store.commit("setBoards", res.boards);
             store.commit("setPagination", res.pagination);
           })
@@ -80,7 +81,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .center {
