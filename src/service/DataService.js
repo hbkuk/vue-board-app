@@ -1,7 +1,5 @@
 import axios from 'axios';
 import router from "@/router/router";
-import queryStringHelper from "@/script/queryStringHelper";
-import storeHelper from "@/script/storeHelper";
 
 /**
  * 데이터 서비스 클래스
@@ -15,12 +13,9 @@ class DataService {
      * @throws {Error} - 실패 시 에러를 던짐
      */
     async fetchBoards(searchConditionParams) {
-        storeHelper.commitSearchConditionToStore(searchConditionParams);
-
-        const filteredSearchParams = queryStringHelper.filteredSearchParams(searchConditionParams);
-        const response = await axios.get('/api/boards', {params: filteredSearchParams});
+        const response = await axios.get('/api/boards', {params: searchConditionParams});
         if (response.status >= 200 && response.status < 300) {
-            await router.push({path: '/boards', query: filteredSearchParams});
+            await router.push({path: '/boards', query: searchConditionParams});
             return response.data;
         } else {
             throw new Error('게시판 데이터를 가져오는데 실패했습니다. 상태 코드: ' + response.status);
