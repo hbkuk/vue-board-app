@@ -6,10 +6,11 @@
 
 <script>
 import {onBeforeMount} from 'vue';
-import store from '@/script/store';
 import Footer from "@/components/Footer.vue";
 import Header from "@/components/Header.vue";
 import queryHelper from "@/script/queryHelper";
+import {mapActions} from "vuex";
+import store from "@/script/store";
 
 /**
  * 애플리케이션의 진입점인 App 컴포넌트입니다.
@@ -18,6 +19,7 @@ import queryHelper from "@/script/queryHelper";
 export default {
   name: 'App',
   components: {Header, Footer},
+  ...mapActions(['updateSearchCondition']),
   setup() {
     /**
      * 컴포넌트가 마운트되기 전에 실행되는 로직을 처리합니다.
@@ -29,7 +31,7 @@ export default {
     onBeforeMount(() => {
       const serializedSearchCondition = sessionStorage.getItem('searchCondition');
       if (serializedSearchCondition) {
-        store.commit('updateSearchCondition', queryHelper.parseSearchConditionParams(store.state.searchCondition, JSON.parse(serializedSearchCondition)))
+        store.dispatch('updateSearchCondition', queryHelper.parseSearchConditionParams(store.state.searchCondition, JSON.parse(serializedSearchCondition)));
       }
     });
   },

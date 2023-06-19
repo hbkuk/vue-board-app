@@ -28,7 +28,7 @@
 import store from "@/script/store";
 import DataService from "@/service/DataService";
 import router from "@/router/router";
-import {mapMutations, mapState} from "vuex";
+import {mapActions, mapState} from "vuex";
 import queryHelper from "@/script/queryHelper";
 
 export default {
@@ -41,7 +41,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['updateSearchCondition']),
+    ...mapActions(['updateSearchCondition', 'updateBoards', 'updatePagination']),
     change(direction) {
       const searchCondition = store.state.searchCondition;
       searchCondition.pageNo = direction === "prev" ? this.pagination.pageNo - 1 : direction === "next" ? this.pagination.pageNo + 1 : direction;
@@ -50,9 +50,9 @@ export default {
 
       DataService.fetchBoards(filteredQuery)
           .then((res) => {
-            this.updateSearchCondition(filteredQuery);
-            store.commit("setBoards", res.boards);
-            store.commit("setPagination", res.pagination);
+            this.$store.dispatch('updateSearchCondition', filteredQuery);
+            this.$store.dispatch('updateBoards', res.boards);
+            this.$store.dispatch('updatePagination', res.pagination);
           })
           .catch((error) => {
             console.error("Failed to fetch boards:", error);

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import {mapMutations, mapState} from "vuex";
+import {mapActions, mapState} from "vuex";
 import store from "@/script/store";
 import queryHelper from "@/script/queryHelper";
 import DataService from "@/service/DataService";
@@ -52,13 +52,13 @@ export default {
     ...mapState(['categories']),
   },
   methods: {
-    ...mapMutations(['updateSearchCondition']),
+    ...mapActions(['updateBoards', 'updatePagination']),
     fetchBoard(query) {
       DataService.fetchBoards(query)
           .then((res) => {
-            this.updateSearchCondition(query);
-            store.commit("setBoards", res.boards);
-            store.commit("setPagination", res.pagination);
+            this.$store.dispatch('updateSearchCondition', query);
+            this.$store.dispatch('updateBoards', res.boards);
+            this.$store.dispatch('updatePagination', res.pagination);
           })
           .catch((error) => {
             console.error("Failed to fetch boards:", error);
