@@ -2,9 +2,9 @@ import axios from 'axios';
 import router from "@/router/router";
 
 /**
- * 데이터 서비스 클래스
+ * 데이터 서비스 함수
  */
-class DataService {
+const DataService = {
     /**
      * 게시판 목록을 가져오는 메서드
      *
@@ -13,14 +13,14 @@ class DataService {
      * @throws {Error} - 실패 시 에러를 던짐
      */
     async fetchBoards(searchConditionParams) {
-        const response = await axios.get('/api/boards', {params: searchConditionParams});
+        const response = await axios.get('/api/boards', { params: searchConditionParams });
         if (response.status >= 200 && response.status < 300) {
-            await router.push({path: '/boards', query: searchConditionParams});
+            await router.push({ path: '/boards', query: searchConditionParams });
             return response.data;
         } else {
             throw new Error('게시판 데이터를 가져오는데 실패했습니다. 상태 코드: ' + response.status);
         }
-    }
+    },
 
     /**
      * 카테고리 목록을 가져오는 메서드
@@ -36,6 +36,6 @@ class DataService {
             throw new Error('카테고리 데이터를 가져오는데 실패했습니다. 상태 코드: ' + response.status);
         }
     }
-}
+};
 
-export default new DataService();
+export default DataService;
