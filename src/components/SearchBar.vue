@@ -27,6 +27,7 @@ const cleanSearchCondition = () => {
   searchCondition.endDate = lib.getCurrentDate();
   searchCondition.categoryIdx = "0";
   searchCondition.keyword = "";
+  emit('updateSearchCondition', searchCondition)
 };
 
 </script>
