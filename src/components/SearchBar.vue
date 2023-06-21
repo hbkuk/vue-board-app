@@ -1,21 +1,20 @@
 <script setup>
-import { reactive } from "vue";
+import {reactive} from "vue";
 import lib from "@/script/lib";
 
-const emit = defineEmits(['updateSearchCondition', 'initSearchCondition'])
+const emit = defineEmits(['updateSearchCondition'])
 
 const props = defineProps({
   categories: Array,
+  searchCondition: Object,
 })
 
 const searchCondition = reactive({
-  startDate: lib.getPastDate(365),
-  endDate: lib.getCurrentDate(),
-  categoryIdx: "0",
-  keyword: "",
+  startDate: props.searchCondition.startDate,
+  endDate: props.searchCondition.endDate,
+  categoryIdx: props.searchCondition.categoryIdx,
+  keyword: props.searchCondition.keyword,
 });
-
-emit('initSearchCondition', searchCondition)
 
 /**
  * 검색 조건을 초기화합니다.
@@ -25,8 +24,8 @@ emit('initSearchCondition', searchCondition)
 const cleanSearchCondition = () => {
   searchCondition.startDate = lib.getPastDate(365);
   searchCondition.endDate = lib.getCurrentDate();
-  searchCondition.categoryIdx = "0";
-  searchCondition.keyword = "";
+  searchCondition.categoryIdx = null;
+  searchCondition.keyword = null;
   emit('updateSearchCondition', searchCondition)
 };
 
@@ -42,7 +41,7 @@ const cleanSearchCondition = () => {
       <div class="col-9 d-flex justify-content-end">
         <select class="form-select me-2" v-model="searchCondition.categoryIdx" aria-label="Default select example"
                 style="max-width: 150px;">
-          <option value="0" selected>모든 카테고리</option>
+          <option :value="null" selected>모든 카테고리</option>
           <option v-for="category in categories" :value="category.categoryIdx" :key="category.categoryIdx">
             {{ category.name }}
           </option>

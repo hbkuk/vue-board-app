@@ -1,29 +1,32 @@
 <script setup>
 import {computed, defineProps} from 'vue';
 
+const emit = defineEmits(['changePageNo'])
+
 const props = defineProps({
   pagination: Object,
 });
 
 const filteredPages = computed(() => {
-  const range = 2; // 현재 페이지를 기준으로 표시할 양쪽 페이지 수
-  const currentPage = props.pagination.pageNo;
-  const maxPage = props.pagination.maxPage;
-  const startPage = Math.max(1, currentPage - range);
-  const endPage = Math.min(maxPage, currentPage + range);
+  let startPage = props.pagination.startPage
+  let endPage = props.pagination.endPage
+
   return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
 });
 
+
+
 // 페이지 변경 이벤트 처리
-const changePage = (page) => {
-  if (page === 'prev') {
-    console.log( '이전' )
-  } else if (page === 'next') {
-    console.log( '다음' )
+const changePage = (changePageNo) => {
+  if (changePageNo === 'prev') {
+    emit('changePageNo', props.pagination.pageNo - 1)
+  } else if (changePageNo === 'next') {
+    emit('changePageNo', props.pagination.pageNo + 1)
   } else {
-    console.log( '그외' )
+    emit('changePageNo', changePageNo)
   }
 };
+
 </script>
 
 <template>
