@@ -7,7 +7,7 @@ import { useFilterParams } from '@/script/filterParams'
  * GET 방식으로 데이터를 가져오는 컴포저블
  * @param {string} url - API 엔드포인트 URL
  * @param {string} routerPath - 라우터 네비게이션을 위한 경로
- * @param {ref=} params - API 요청에 사용되는 반응형 파라미터 (선택적)
+ * @param {Object} params - API 요청에 사용되는 반응형 파라미터 (선택적)
  * @returns {object} - 가져온 데이터와 에러를 포함하는 객체
  */
 export function useGetApi(url, routerPath, params = null) {

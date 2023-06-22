@@ -1,9 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 import SearchBar from "@/components/SearchBar.vue";
 import Pagination from "@/components/Pagination.vue";
 import lib from "@/script/lib";
-import { useGetApi } from "@/composable/getApi";
+import DataService from "@/service/DataService";
 
 /** 검색 조건을 담는 변수 */
 const condition = ref({
@@ -14,8 +14,9 @@ const condition = ref({
   pageNo: 1
 })
 
-const { data: boardsData, error: boardsError } = useGetApi('/api/boards', '/boards', condition)
-const { data: categoriesData, error: categoriesError } = useGetApi('/api/categories', '/boards')
+const { data: boardsData, error: boardsError } = DataService.fetchBoards(condition)
+const { data: categoriesData, error: categoriesError } = DataService.fetchCategories()
+
 </script>
 
 <template>
