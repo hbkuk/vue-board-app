@@ -1,6 +1,5 @@
 import axios from 'axios';
 import router from "@/router/router";
-import queryHelper from "@/script/queryHelper";
 
 /**
  * 데이터 서비스 함수
