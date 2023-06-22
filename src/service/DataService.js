@@ -9,8 +9,7 @@ const DataService = {
      * 게시판 목록을 가져오는 함수
      *
      * @param {object} condition - 조건 정보가 담긴 객체
-     * @returns {{data: null, error: null}} - 게시판 목록
-     * @throws {Error} - 실패 시 에러를 던짐
+     * @returns {{data, error}} - 게시판 목록
      */
     fetchBoards(condition) {
         return useGetApi('/api/boards', '/boards', condition)
@@ -19,8 +18,7 @@ const DataService = {
     /**
      * 카테고리 목록을 가져오는 함수
      *
-     * @returns {{data: null, error: null}} - 카테고리 목록
-     * @throws {Error} - 실패 시 에러를 던짐
+     * @returns {{data, error}} - 카테고리 목록
      */
     fetchCategories() {
         return useGetApi('/api/categories', '/boards')
