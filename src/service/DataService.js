@@ -1,5 +1,5 @@
-import {useGetApiWithParams} from "@/composable/getApiWithParams";
-import {useGetApi} from "@/composable/getApi";
+import {useGetApiWithParams} from "@/composable/fetch/getApiWithParams";
+import {useGetApi} from "@/composable/fetch/getApi";
 
 /**
  * 데이터 서비스 함수
