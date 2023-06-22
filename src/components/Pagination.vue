@@ -7,16 +7,20 @@ const props = defineProps({
   pagination: Object,
 });
 
+/**
+ * 필터링된 페이지 배열을 계산하는 컴퓨티드 속성
+ * @type {Array}
+ */
 const filteredPages = computed(() => {
   let startPage = props.pagination.startPage
   let endPage = props.pagination.endPage
-
   return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
 });
 
-
-
-// 페이지 변경 이벤트 처리
+/**
+ * 페이지 번호 변경을 처리하는 메서드
+ * @param {number|string} changePageNo - 변경할 페이지 번호 또는 'prev', 'next'
+ */
 const changePage = (changePageNo) => {
   if (changePageNo === 'prev') {
     emit('changePageNo', props.pagination.pageNo - 1)
