@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
 import SearchBar from "@/components/SearchBar.vue";
 import Pagination from "@/components/Pagination.vue";
 import lib from "@/script/lib";
@@ -20,7 +20,6 @@ Object.assign(condition.value, useInitialCondition(router, sessionStorage)); // 
 
 const { data: boardsData, error: boardsError } = DataService.fetchBoards(condition)
 const { data: categoriesData, error: categoriesError } = DataService.fetchCategories()
-
 </script>
 
 <template>
@@ -63,8 +62,8 @@ const { data: categoriesData, error: categoriesError } = DataService.fetchCatego
         </template>
         <template v-else-if="boardsError !== null">
           <tr>
-            <td colspan="7" class="text-center">
-              <div class="alert alert-danger" role="alert">
+            <td colspan="7">
+              <div class="alert alert-danger text-center" role="alert">
                 {{ boardsError.detail }}
               </div>
             </td>
