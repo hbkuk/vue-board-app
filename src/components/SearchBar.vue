@@ -1,19 +1,19 @@
 <script setup>
-import {reactive} from "vue";
+import { ref } from "vue";
 import lib from "@/script/lib";
 
 const emit = defineEmits(['updateSearchCondition'])
 
 const props = defineProps({
   categories: Array,
-  searchCondition: Object,
+  condition: Object,
 })
 
-const searchCondition = reactive({
-  startDate: props.searchCondition.startDate,
-  endDate: props.searchCondition.endDate,
-  categoryIdx: props.searchCondition.categoryIdx,
-  keyword: props.searchCondition.keyword,
+const searchCondition = ref({
+  startDate: props.condition.startDate,
+  endDate: props.condition.endDate,
+  categoryIdx: props.condition.categoryIdx,
+  keyword: props.condition.keyword,
 });
 
 /**
@@ -22,11 +22,11 @@ const searchCondition = reactive({
  * @returns {void}
  */
 const cleanSearchCondition = () => {
-  searchCondition.startDate = lib.getPastDate(365);
-  searchCondition.endDate = lib.getCurrentDate();
-  searchCondition.categoryIdx = null;
-  searchCondition.keyword = null;
-  emit('updateSearchCondition', searchCondition)
+  searchCondition.value.startDate = lib.getPastDate(365);
+  searchCondition.value.endDate = lib.getCurrentDate();
+  searchCondition.value.categoryIdx = null;
+  searchCondition.value.keyword = null;
+  emit('updateSearchCondition', searchCondition.value)
 };
 
 </script>
