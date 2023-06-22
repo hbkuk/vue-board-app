@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import SearchBar from "@/components/SearchBar.vue";
 import Pagination from "@/components/Pagination.vue";
 import lib from "@/script/lib";
-import { useGetApi } from "@/script/fetch";
+import { useGetApi } from "@/composable/getApi";
 
 /** 검색 조건을 담는 변수 */
 const condition = ref({
@@ -11,16 +11,19 @@ const condition = ref({
   endDate: lib.getCurrentDate(),
   categoryIdx: null,
   keyword: null,
+  pageNo: 1
 })
 
-const { data, error } = useGetApi('/api/boards', '/boards', condition)
-
+const { data: boardsData, error: boardsError } = useGetApi('/api/boards', '/boards', condition)
+const { data: categoriesData, error: categoriesError } = useGetApi('/api/categories', '/boards')
 </script>
 
 <template>
-  <SearchBar :categories="categories"
-             :condition="condition"
-             @updateSearchCondition="(updateSearchCondition) => condition = updateSearchCondition"/>
+  <template v-if="categoriesData !== null">
+    <SearchBar :categories="categoriesData.categories"
+               :condition="condition"
+               @updateSearchCondition="(updateSearchCondition) => condition = updateSearchCondition"/>
+  </template>
   <div class="boards text-center">
     <table class="table center table-hover" style="max-width: 1280px;">
       <thead class="thead-dark">
@@ -35,11 +38,11 @@ const { data, error } = useGetApi('/api/boards', '/boards', condition)
         </tr>
       </thead>
       <tbody>
-        <template v-if="data !== null">
-          <tr v-if="data.boards.length === 0">
+        <template v-if="boardsData !== null">
+          <tr v-if="boardsData.boards.length === 0">
             <td colspan="7" class="text-center">게시글이 없습니다.</td>
           </tr>
-          <tr v-else v-for="(board, index) in data.boards" :key="index">
+          <tr v-else v-for="(board, index) in boardsData.boards" :key="index">
             <td class="col-md-1">{{ board.categoryName }}</td>
             <td class="col-md-1"> O</td>
             <td class="col-md-4">
@@ -53,11 +56,11 @@ const { data, error } = useGetApi('/api/boards', '/boards', condition)
             <td class="col-md-2">{{ board.modDate }}</td>
           </tr>
         </template>
-        <template v-else-if="error !== null">
+        <template v-else-if="boardsError !== null">
           <tr>
             <td colspan="7" class="text-center">
               <div class="alert alert-danger" role="alert">
-                {{ error.detail }}
+                {{ boardsError.detail }}
               </div>
             </td>
           </tr>
@@ -70,9 +73,9 @@ const { data, error } = useGetApi('/api/boards', '/boards', condition)
       </tbody>
     </table>
   </div>
-
-<!--  <Pagination :pagination="pagination"-->
-<!--              @changePageNo="changePageNo"/>-->
+  <template v-if="boardsData !== null">
+    <Pagination :pagination="boardsData.pagination" @changePageNo="(changePageNo) => condition.pageNo = changePageNo"/>
+  </template>
 </template>
 
 <style scoped>
