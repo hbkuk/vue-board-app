@@ -1,4 +1,4 @@
-export default {
+const lib = {
     /**
      * 현재 날짜를 가져오는 함수
      *
@@ -35,5 +35,6 @@ export default {
         const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${year}-${month}-${day} ${hours}시${minutes}분`;
     }
+};
 
-}
+export default lib;
