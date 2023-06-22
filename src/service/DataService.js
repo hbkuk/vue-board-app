@@ -1,3 +1,4 @@
+import {useGetApiWithParams} from "@/composable/getApiWithParams";
 import {useGetApi} from "@/composable/getApi";
 
 /**
@@ -12,7 +13,7 @@ const DataService = {
      * @returns {{data, error}} - 게시판 목록
      */
     fetchBoards(condition) {
-        return useGetApi('/api/boards', '/boards', condition)
+        return useGetApiWithParams('/api/boards', '/boards', condition)
     },
 
     /**
@@ -21,7 +22,7 @@ const DataService = {
      * @returns {{data, error}} - 카테고리 목록
      */
     fetchCategories() {
-        return useGetApi('/api/categories', '/boards')
+        return useGetApi('/api/categories')
     },
 };
 

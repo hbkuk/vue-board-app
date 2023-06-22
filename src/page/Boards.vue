@@ -1,9 +1,10 @@
 <script setup>
-import {ref} from 'vue'
+import {ref, watch} from 'vue'
 import SearchBar from "@/components/SearchBar.vue";
 import Pagination from "@/components/Pagination.vue";
 import lib from "@/script/lib";
 import DataService from "@/service/DataService";
+import router from "@/router/router";
 
 /** 검색 조건을 담는 변수 */
 const condition = ref({
