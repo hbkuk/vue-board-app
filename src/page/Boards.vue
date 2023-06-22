@@ -1,9 +1,10 @@
 <script setup>
-import {ref, watch} from 'vue'
+import { ref } from 'vue'
 import SearchBar from "@/components/SearchBar.vue";
 import Pagination from "@/components/Pagination.vue";
 import lib from "@/script/lib";
 import DataService from "@/service/DataService";
+import {useInitialCondition} from "@/composable/InitialCondition";
 import router from "@/router/router";
 
 /** 검색 조건을 담는 변수 */
@@ -14,6 +15,8 @@ const condition = ref({
   keyword: null,
   pageNo: 1
 })
+
+Object.assign(condition.value, useInitialCondition(router, sessionStorage)); // 초기 검색 조건을 condition 값에 할당
 
 const { data: boardsData, error: boardsError } = DataService.fetchBoards(condition)
 const { data: categoriesData, error: categoriesError } = DataService.fetchCategories()
