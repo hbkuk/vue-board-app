@@ -1,10 +1,11 @@
 import { ref, unref, isRef, watchEffect } from 'vue'
 import axios from 'axios'
 import router from '@/router/router'
-import { useFilterParams } from '@/script/filterParams'
+import { useFilterParams } from '@/composable/filterParams'
 
 /**
  * GET 방식으로 데이터를 가져오는 컴포저블
+ *
  * @param {string} url - API 엔드포인트 URL
  * @returns {object} - 가져온 데이터와 에러를 포함하는 객체
  */
@@ -14,6 +15,7 @@ export function useGetApi(url) {
 
     /**
      * 데이터를 가져오는 작업을 수행합니다.
+     *
      * @async
      */
     async function fetchData() {
