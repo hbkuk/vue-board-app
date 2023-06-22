@@ -14,6 +14,7 @@ const searchCondition = ref({
   endDate: props.condition.endDate,
   categoryIdx: props.condition.categoryIdx,
   keyword: props.condition.keyword,
+  pageNo: props.condition.pageNo,
 });
 
 /**
@@ -26,6 +27,7 @@ const cleanSearchCondition = () => {
   searchCondition.value.endDate = lib.getCurrentDate();
   searchCondition.value.categoryIdx = null;
   searchCondition.value.keyword = null;
+  searchCondition.value.pageNo = 1;
   emit('updateSearchCondition', searchCondition.value)
 };
 
