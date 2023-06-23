@@ -1,11 +1,12 @@
 <script setup>
-import {onMounted, ref} from 'vue'
+import {ref} from 'vue'
 import SearchBar from "@/components/SearchBar.vue";
 import Pagination from "@/components/Pagination.vue";
 import lib from "@/script/lib";
 import DataService from "@/service/DataService";
 import {useInitialCondition} from "@/composable/InitialCondition";
 import router from "@/router/router";
+import WelcomeBanner from "@/components/WelcomeBanner.vue";
 
 /** 검색 조건을 담는 변수 */
 const condition = ref({
@@ -23,11 +24,17 @@ const { data: categoriesData, error: categoriesError } = DataService.fetchCatego
 </script>
 
 <template>
+  <WelcomeBanner :title="`커뮤니티`"
+                 :subTitle="`다양한 사람을 만나고 생각의 폭을 넓혀보세요.`"
+                 class="mb-3"/>
   <template v-if="categoriesData !== null">
     <SearchBar :categories="categoriesData.categories"
                :condition="condition"
                @updateSearchCondition="(updateSearchCondition) => condition = updateSearchCondition"/>
   </template>
+  <div class="container mt-3 mb-3">
+    <router-link class="btn btn-primary font-weight-bold" :to="`/board/write`">게시글 작성</router-link>
+  </div>
   <div class="boards text-center">
     <table class="table center table-hover" style="max-width: 1280px;">
       <thead class="thead-dark">

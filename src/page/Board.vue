@@ -3,12 +3,15 @@ import DataService from "@/service/DataService";
 import router from "@/router/router";
 import lib from "../script/lib";
 import Comment from "@/components/Comment.vue";
+import WelcomeBanner from "@/components/WelcomeBanner.vue";
 
 const { data: boardData, error: boardError } = DataService.fetchBoard(router.currentRoute._value.params.boardIdx)
 </script>
 
 <template>
   <template v-if="boardData !== null">
+    <WelcomeBanner :title="`커뮤니티`"
+                   :subTitle="`다양한 사람을 만나고 생각의 폭을 넓혀보세요.`"/>
     <div class="board bg-white text-dark py-1 text-left">
       <div class="container mt-3">
         <div class="hstack gap-3">
