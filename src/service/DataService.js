@@ -17,13 +17,23 @@ const DataService = {
     },
 
     /**
-     * 게시물정보를 가져오는 함수
+     * 게시물 정보를 가져오는 함수
      *
      * @param boardIdx 게시물 번호
      * @returns {{data, error}}
      */
     fetchBoard(boardIdx) {
-        return useGetApi('/api/board/' + boardIdx , '/board/' + boardIdx )
+        return useGetApi('/api/board/' + boardIdx)
+    },
+
+    /**
+     * 게시물 작성을 위한 가져오는 함수
+     *
+     * @param boardIdx 게시물 번호
+     * @returns {{data, error}}
+     */
+    fetchWriteBoard() {
+        return useGetApi('/api/board/write')
     },
 
     /**
