@@ -14,6 +14,9 @@ const { data: boardData, error: boardError } = DataService.fetchBoard(router.cur
                    :subTitle="`다양한 사람을 만나고 생각의 폭을 넓혀보세요.`"/>
     <div class="board bg-white text-dark py-1 text-left">
       <div class="container mt-3">
+        <div class="d-flex flex-row mt-3 mb-5">
+          <button type="button" class="btn btn-secondary btn-sm" @click="$router.go(-1)"><i class="fa-solid fa-arrow-left"></i> 나가기</button>
+        </div>
         <div class="hstack gap-3">
           <div class="vr"></div>
           <span class="fw-bold">{{ boardData.board.categoryName }}</span>
@@ -48,8 +51,8 @@ const { data: boardData, error: boardError } = DataService.fetchBoard(router.cur
                 <hr class="my-4"/>
                 <div class="d-flex justify-content-between">
 <!--                  // TODO: 삭제는 Modal-->
-                  <router-link class="btn btn-danger font-weight-bold" :to="`/board/delete/${boardData.board.boardIdx}`">게시글 삭제</router-link>
-                  <router-link class="btn btn-secondary font-weight-bold" :to="`/board/modify/${boardData.board.boardIdx}`">게시글 수정</router-link>
+                  <router-link class="btn btn-danger font-weight-bold btn-sm" :to="`/board/delete/${boardData.board.boardIdx}`">게시글 삭제</router-link>
+                  <router-link class="btn btn-secondary font-weight-bold btn-sm" :to="`/board/modify/${boardData.board.boardIdx}`">게시글 수정</router-link>
                 </div>
                 <Comment v-if="boardData.comments" :comments="boardData.comments"/>
               </div>

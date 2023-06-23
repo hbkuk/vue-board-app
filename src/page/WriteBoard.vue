@@ -52,7 +52,7 @@ function submitForm() {
       <div class="container">
         <!-- Title -->
         <div class="d-flex flex-row mt-3 mb-3">
-          <button type="button" class="btn btn-secondary" @click="$router.go(-1)">나가기</button>
+          <button type="button" class="btn btn-secondary btn-sm" @click="$router.go(-1)"><i class="fa-solid fa-arrow-left"></i> 나가기</button>
         </div>
         <!-- Main content -->
         <div class="row">

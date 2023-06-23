@@ -33,7 +33,7 @@ const { data: categoriesData, error: categoriesError } = DataService.fetchCatego
                @updateSearchCondition="(updateSearchCondition) => condition = updateSearchCondition"/>
   </template>
   <div class="container mt-3 mb-3">
-    <router-link class="btn btn-primary font-weight-bold" :to="`/board/write`">게시글 작성</router-link>
+    <router-link class="btn btn-primary font-weight-bold btn-sm" :to="`/board/write`">게시글 작성</router-link>
   </div>
   <div class="boards text-center">
     <table class="table center table-hover" style="max-width: 1280px;">

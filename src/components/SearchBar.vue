@@ -50,8 +50,8 @@ const cleanSearchCondition = () => {
         </select>
         <input class="form-control me-2" type="text" v-model="searchCondition.keyword" placeholder="게시글 검색"
                style="max-width: 300px;">
-        <button class="btn btn-primary text-nowrap" @click="$emit('updateSearchCondition', searchCondition)">검색</button>&nbsp;
-        <button class="btn btn-danger text-nowrap" @click="cleanSearchCondition">검색 초기화</button>
+        <button class="btn btn-primary btn-sm text-nowrap" @click="$emit('updateSearchCondition', searchCondition)">검색</button>&nbsp;
+        <button class="btn btn-danger btn-sm text-nowrap" @click="cleanSearchCondition">검색 초기화</button>
       </div>
     </div>
   </div>

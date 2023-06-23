@@ -1,5 +1,4 @@
 <template>
-  <div>I am UpdateBoards</div>
 </template>
 
 <script>

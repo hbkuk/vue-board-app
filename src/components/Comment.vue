@@ -13,7 +13,7 @@ const props = defineProps({
         <textarea class="form-control mt-2" rows="5" id="comment" name="text" placeholder="댓글 입력 ..."></textarea>
       </div>
       <div class="mb-4 text-end">
-        <button type="button" class="btn btn-primary">댓글 등록</button>
+        <button type="button" class="btn btn-primary btn-sm">댓글 등록</button>
       </div>
     </div>
 
