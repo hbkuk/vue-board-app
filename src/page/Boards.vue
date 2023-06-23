@@ -33,7 +33,7 @@ const { data: categoriesData, error: categoriesError } = DataService.fetchCatego
                @updateSearchCondition="(updateSearchCondition) => condition = updateSearchCondition"/>
   </template>
   <div class="container mt-3 mb-3">
-    <router-link class="btn btn-primary font-weight-bold btn-sm" :to="`/board/write`">게시글 작성</router-link>
+    <router-link class="btn btn-primary font-weight-bold btn-sm" :to="`/board/write`"><i class="fa-solid fa-pen"></i> 게시글 작성</router-link>
   </div>
   <div class="boards text-center">
     <table class="table center table-hover" style="max-width: 1280px;">
@@ -63,8 +63,8 @@ const { data: categoriesData, error: categoriesError } = DataService.fetchCatego
             </td>
             <td class="col-md-1">{{ board.writer }}</td>
             <td class="col-md-1">{{ board.hit }}</td>
-            <td class="col-md-2">{{ board.regDate }}</td>
-            <td class="col-md-2">{{ board.modDate }}</td>
+            <td class="col-md-2">{{ lib.formatDate(board.regDate) }}</td>
+            <td class="col-md-2">{{ board.modDate !== null ? lib.formatDate(board.modDate) : '' }}</td>
           </tr>
         </template>
         <template v-else-if="boardsError !== null">

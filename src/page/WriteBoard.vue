@@ -100,7 +100,7 @@ function submitForm() {
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
-                      <button type="button" class="btn btn-primary" @click="submitForm">등록</button>
+                      <button type="button" class="btn btn-primary" @click="submitForm"><i class="fa-regular fa-circle-check"></i> 등록</button>
                     </div>
 
                   </div>

@@ -37,11 +37,11 @@ const cleanSearchCondition = () => {
   <div class="container">
     <div class="row">
       <div class="col-3 d-flex justify-content-start">
-        <input class="currentDate" type="date" v-model="searchCondition.startDate" placeholder="시작 날짜"/> &nbsp;
-        <input class="currentDate" type="date" v-model="searchCondition.endDate" placeholder="끝 날짜"/>
+        <input class="currentDate text-center form-control" type="date" v-model="searchCondition.startDate" placeholder="시작 날짜"/> &nbsp;
+        <input class="endDate text-center form-control" type="date" v-model="searchCondition.endDate" placeholder="끝 날짜"/>
       </div>
       <div class="col-9 d-flex justify-content-end">
-        <select class="form-select me-2" v-model="searchCondition.categoryIdx" aria-label="Default select example"
+        <select class="form-select me-2 text" v-model="searchCondition.categoryIdx" aria-label="Default select example"
                 style="max-width: 150px;">
           <option :value="null" selected>모든 카테고리</option>
           <option v-for="category in categories" :value="category.categoryIdx" :key="category.categoryIdx">
