@@ -13,12 +13,18 @@
           <li class="nav-item px-4"><a class="nav-link" href="#!">공지사항</a></li>
           <li class="nav-item px-4"><a class="nav-link" href="#!">마이페이지</a></li>
         </ul>
-        <a class="navbar-brand ps-3" href="#">icon1
-          <i class="bi bi-chat-left-dots"></i>
-        </a>
-        <a class="navbar-brand ps-3" href="#">icon2
-          <i class="bi bi-person"></i>
-        </a>
+        <ul class="navbar-nav d-flex flex-row me-1">
+          <li class="nav-item me-3 me-lg-3">
+            <a class="nav-link" href="#"><i class="fa-solid fa-bell"></i></a>
+          </li>
+          <li class="nav-item me-3 me-lg-3">
+            <a class="nav-link" href="#"><i class="fa-solid fa-comment"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa-regular fa-user"></i></a>
+          </li>
+        </ul>
+
       </div>
     </div>
   </nav>
