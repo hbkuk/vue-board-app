@@ -55,7 +55,8 @@ const { data: categoriesData, error: categoriesError } = DataService.fetchCatego
           </tr>
           <tr v-else v-for="(board, index) in boardsData.boards" :key="index">
             <td class="col-md-1">{{ board.categoryName }}</td>
-            <td class="col-md-1"> O</td>
+            <td class="col-md-1" v-if="board.files.length !== 0"><i class="fa-regular fa-folder-closed"></i></td>
+            <td class="col-md-1" v-else><i class="fa-regular fa-file-excel"></i></td>
             <td class="col-md-4">
               <router-link class="text-decoration-none text-dark font-weight-bold" :to="`/board/${board.boardIdx}`">
                 {{ board.title }}
