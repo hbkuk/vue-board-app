@@ -1,17 +1,18 @@
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import DataService from "@/service/DataService";
 import router from "@/router/router";
 import lib from "@/script/lib";
 import WelcomeBanner from "@/components/WelcomeBanner.vue";
 
-const boardData = ref(null);
-const fileData = ref(null);
+const board = ref(null);
+const files = ref(null);
+
 const password = ref('')
 const submitError = ref(null)
 
 // TODO: props로 변경할것.
-const { data: modifyBoardData, error: modifyBoardError } = DataService.fetchModifyBoard(router.currentRoute._value.params.boardIdx)
+const { data: modifyViewData, error: modifyViewError } = DataService.fetchModifyBoard(router.currentRoute._value.params.boardIdx)
 
 let formData = new FormData();
 
@@ -28,11 +29,11 @@ const handleFileUpload = (event) => {
  * 폼을 제출하는 함수
  */
 function submitForm() {
-  formData.append('fileIdx', fileData.value.map(file => file.fileIdx))
+  formData.append('fileIdx', fileIndexes.value)
   formData.append(
-      "board", new Blob([JSON.stringify(boardData.value)], { type: "application/json" })
+      "board", new Blob([JSON.stringify(board.value)], { type: "application/json" })
   );
-  submitError.value = DataService.fetchModifyAction(boardData.value.boardIdx, formData)
+  submitError.value = DataService.fetchModifyAction(board.value.boardIdx, formData)
 }
 
 /**
@@ -40,16 +41,24 @@ function submitForm() {
  * @param {number} fileIdx - 삭제할 파일의 인덱스
  */
 function deleteFileByFileIdx(fileIdx) {
-  fileData.value = fileData.value.filter(file => file.fileIdx !== fileIdx);
+  files.value = files.value.filter(file => file.fileIdx !== fileIdx);
 }
+
+/**
+ * 파일의 인덱스를 계산된 속성으로 반환하는 함수
+ * @returns {number[]} 파일의 인덱스 배열
+ */
+const fileIndexes = computed(() => {
+  return files.value.map(file => file.fileIdx)
+})
 
 /**
  * modifyBoardData 객체를 감시하고 값이 변경될 때마다 boardData와 fileData에 새로운 값을 할당하는 함수
  * @param {object} newModifyBoardData - 변경된 modifyBoardData 객체
  */
-watch(modifyBoardData, (newModifyBoardData) => {
-  boardData.value = newModifyBoardData.board
-  fileData.value = newModifyBoardData.files
+watch(modifyViewData, (newModifyBoardData) => {
+  board.value = newModifyBoardData.board
+  files.value = newModifyBoardData.files
 })
 
 /**
@@ -57,7 +66,7 @@ watch(modifyBoardData, (newModifyBoardData) => {
  * @param {string} newPassword - 변경된 password 값
  */
 watch(password, (newPassword) => {
-  boardData.value.password = newPassword;
+  board.value.password = newPassword;
 })
 
 /**
@@ -71,7 +80,7 @@ watch(submitError, (newError) => {
 </script>
 
 <template>
-  <template v-if="boardData !== null">
+  <template v-if="board !== null">
     <WelcomeBanner :title="`함께 할 때 더 즐거운 순간`"
                    :subTitle="`다양한 사람을 만나고 생각의 폭을 넓혀보세요.`"/>
     <!-- write -->
@@ -98,15 +107,17 @@ watch(submitError, (newError) => {
                     <div class="d-flex align-items-center justify-content-center">
                       <span class="badge bg-success me-2 badge-lg">등록일시</span>
                       <div class="d-flex me-2">
-                        <div class="text-secondary text-lg">{{ lib.formatDate(boardData.regDate) }}</div>
+                        <div class="text-secondary text-lg">{{ lib.formatDate(board.regDate) }}</div>
                       </div>
                       <span class="badge bg-warning text-dark me-2 badge-lg">수정일시</span>
                       <div class="d-flex me-2">
-                        <div class="text-secondary text-lg">{{ boardData.modDate !== null ? lib.formatDate(boardData.modDate) : '없음' }}</div>
+                        <div class="text-secondary text-lg">{{
+                            board.modDate !== null ? lib.formatDate(board.modDate) : '없음'
+                          }}</div>
                       </div>
                       <span class="badge bg-info text-dark me-2 badge-lg">조회수</span>
                       <div class="d-flex">
-                        <div class="text-secondary text-lg">{{ boardData.hit }}</div>
+                        <div class="text-secondary text-lg">{{ board.hit }}</div>
                       </div>
                     </div>
                     <form>
@@ -114,7 +125,7 @@ watch(submitError, (newError) => {
                         <label class="form-label">카테고리</label>
                         <select class="form-select">
                           <option :value="null">모든 카테고리</option>
-                          <option v-for="category in boardData.categories" :value="category.categoryIdx" :key="category.categoryIdx" :selected="boardData.categoryIdx === category.categoryIdx">
+                          <option v-for="category in board.categories" :value="category.categoryIdx" :key="category.categoryIdx" :selected="board.categoryIdx === category.categoryIdx">
                             {{ category.name }}
                           </option>
                         </select>
@@ -122,7 +133,7 @@ watch(submitError, (newError) => {
 
                       <div class="mb-3">
                         <label for="writerInput" class="form-label">작성자</label>
-                        <input type="text" class="form-control" id="writerInput" placeholder="3글자 이상, 4글자 이하여야 합니다" v-model="boardData.writer" required minlength="3" maxlength="4">
+                        <input type="text" class="form-control" id="writerInput" placeholder="3글자 이상, 4글자 이하여야 합니다" v-model="board.writer" required minlength="3" maxlength="4">
                       </div>
 
                       <div class="mb-3">
@@ -132,19 +143,19 @@ watch(submitError, (newError) => {
 
                       <div class="mb-3">
                         <label for="titleInput" class="form-label">제목</label>
-                        <input type="text" class="form-control" id="titleInput" placeholder="4글자 이상, 100글자 이하여야 합니다" v-model="boardData.title" required minlength="4" maxlength="100">
+                        <input type="text" class="form-control" id="titleInput" placeholder="4글자 이상, 100글자 이하여야 합니다" v-model="board.title" required minlength="4" maxlength="100">
                       </div>
 
                       <div class="mb-3">
                         <label for="contentTextarea" class="form-label">내용</label>
-                        <textarea class="form-control" id="contentTextarea" rows="3" placeholder="4글자 이상, 2000글자 이하여야 합니다" v-model="boardData.content" required minlength="4" maxlength="2000"></textarea>
+                        <textarea class="form-control" id="contentTextarea" rows="3" placeholder="4글자 이상, 2000글자 이하여야 합니다" v-model="board.content" required minlength="4" maxlength="2000"></textarea>
                       </div>
 
 
-                      <div class="mb-3" v-if="fileData && fileData.length > 0">
+                      <div class="mb-3" v-if="files && files.length > 0">
                         <ul class="list-group list-group-light">
                           <label class="form-label">기존 업로드된 파일</label>
-                          <div v-for="file in fileData" :key="file.fileIdx" class="list-group-item list-group-item-action px-3 border-1 ripple d-flex align-items-center">
+                          <div v-for="file in files" :key="file.fileIdx" class="list-group-item list-group-item-action px-3 border-1 ripple d-flex align-items-center">
                             <div class="flex-grow-1 text-decoration-none text-dark">{{ file.originalName }} ({{ file.fileSize }})</div>
                             <button type="button" class="btn-close" aria-label="Delete" @click="deleteFileByFileIdx(file.fileIdx)"></button>
                           </div>
@@ -169,9 +180,9 @@ watch(submitError, (newError) => {
       </div>
     </div>
   </template>
-  <template v-else-if="modifyBoardError != null">
+  <template v-else-if="modifyViewError != null">
     <div class="alert alert-danger text-center" role="alert">
-      {{ modifyBoardError.detail }}
+      {{ modifyViewError.detail }}
     </div>
   </template>
   <template v-else>
