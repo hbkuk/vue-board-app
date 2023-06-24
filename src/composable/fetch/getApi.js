@@ -1,7 +1,5 @@
-import { ref, unref, isRef, watchEffect } from 'vue'
+import {ref} from 'vue'
 import axios from 'axios'
-import router from '@/router/router'
-import { useFilterParams } from '@/composable/filterParams'
 
 /**
  * GET 방식으로 데이터를 가져오는 컴포저블

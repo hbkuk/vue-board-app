@@ -2,7 +2,7 @@
 import DataService from "@/service/DataService";
 import lib from "@/script/lib";
 import WelcomeBanner from "@/components/WelcomeBanner.vue";
-import {useModifySubmitForm} from "@/composable/modifySubmitForm";
+import {useModifySubmitForm} from "@/composable/submitForm/modifySubmitForm";
 import {defineProps} from "vue";
 
 const props = defineProps({
