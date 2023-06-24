@@ -1,11 +1,15 @@
 <script setup>
 import DataService from "@/service/DataService";
-import router from "@/router/router";
 import lib from "../script/lib";
 import Comment from "@/components/Comment.vue";
 import WelcomeBanner from "@/components/WelcomeBanner.vue";
+import {defineProps} from "vue";
 
-const { data: boardData, error: boardError } = DataService.fetchBoard(router.currentRoute._value.params.boardIdx)
+const props = defineProps({
+  boardIdx: String,
+});
+
+const { data: boardData, error: boardError } = DataService.fetchBoard(props.boardIdx)
 </script>
 
 <template>
@@ -15,7 +19,7 @@ const { data: boardData, error: boardError } = DataService.fetchBoard(router.cur
     <div class="board bg-white text-dark py-1 text-left">
       <div class="container mt-3">
         <div class="d-flex flex-row mt-3 mb-5">
-          <button type="button" class="btn btn-secondary btn-sm" @click="$router.go(-1)"><i class="fa-solid fa-arrow-left"></i> 나가기</button>
+          <button type="button" class="btn btn-secondary btn-sm" @click="$router.push({name: 'Boards'})"><i class="fa-solid fa-arrow-left"></i> 나가기</button>
         </div>
         <div class="hstack gap-3">
           <div class="vr"></div>
