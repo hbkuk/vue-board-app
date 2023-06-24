@@ -1,5 +1,5 @@
 <script setup>
-import lib from "../script/lib";
+import dateUtils from "../script/DateUtils";
 
 const props = defineProps({
   comments: Array
@@ -30,7 +30,7 @@ const props = defineProps({
             </div>
             <div class="d-flex flex-row align-items-center">
               <i class="bi bi-chevron-up mx-2"></i>
-              <p class="small text-muted mb-0">{{ lib.formatDate(comment.regDate) }}</p><i
+              <p class="small text-muted mb-0">{{ dateUtils.formatDate(comment.regDate) }}</p><i
                 class="ms-2 bi-chevron-down"></i>
             </div>
           </div>

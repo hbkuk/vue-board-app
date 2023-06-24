@@ -2,7 +2,7 @@
 import {ref} from 'vue'
 import SearchBar from "@/components/SearchBar.vue";
 import Pagination from "@/components/Pagination.vue";
-import lib from "@/script/lib";
+import dateUtils from "@/script/DateUtils";
 import DataService from "@/service/DataService";
 import {useInitialCondition} from "@/composable/InitialCondition";
 import router from "@/router/router";
@@ -10,8 +10,8 @@ import WelcomeBanner from "@/components/WelcomeBanner.vue";
 
 /** 검색 조건을 담는 변수 */
 const condition = ref({
-  startDate: lib.getPastDate(365),
-  endDate: lib.getCurrentDate(),
+  startDate: dateUtils.getPastDate(365),
+  endDate: dateUtils.getCurrentDate(),
   categoryIdx: null,
   keyword: null,
   pageNo: 1
@@ -64,8 +64,8 @@ const { data: categoriesData, error: categoriesError } = DataService.fetchCatego
             </td>
             <td class="col-md-1">{{ board.writer }}</td>
             <td class="col-md-1">{{ board.hit }}</td>
-            <td class="col-md-2">{{ lib.formatDate(board.regDate) }}</td>
-            <td class="col-md-2">{{ board.modDate !== null ? lib.formatDate(board.modDate) : '' }}</td>
+            <td class="col-md-2">{{ dateUtils.formatDate(board.regDate) }}</td>
+            <td class="col-md-2">{{ board.modDate !== null ? dateUtils.formatDate(board.modDate) : '' }}</td>
           </tr>
         </template>
         <template v-else-if="boardsError !== null">

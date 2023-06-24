@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import lib from "@/script/lib";
+import dateUtils from "@/script/DateUtils";
 
 const emit = defineEmits(['updateSearchCondition'])
 
@@ -23,8 +23,8 @@ const searchCondition = ref({
  * @returns {void}
  */
 const cleanSearchCondition = () => {
-  searchCondition.value.startDate = lib.getPastDate(365);
-  searchCondition.value.endDate = lib.getCurrentDate();
+  searchCondition.value.startDate = dateUtils.getPastDate(365);
+  searchCondition.value.endDate = dateUtils.getCurrentDate();
   searchCondition.value.categoryIdx = null;
   searchCondition.value.keyword = null;
   searchCondition.value.pageNo = 1;

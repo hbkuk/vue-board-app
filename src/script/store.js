@@ -1,5 +1,5 @@
 import {createStore} from 'vuex';
-import lib from "@/script/lib";
+import dateUtils from "@/script/DateUtils";
 
 /**
  * Vuex 스토어를 생성합니다.

@@ -1,6 +1,6 @@
 <script setup>
 import DataService from "@/service/DataService";
-import lib from "@/script/lib";
+import dateUtils from "@/script/DateUtils";
 import WelcomeBanner from "@/components/WelcomeBanner.vue";
 import {useModifySubmitForm} from "@/composable/submitForm/modifySubmitForm";
 import {defineProps} from "vue";
@@ -49,11 +49,13 @@ const submitForm = () => {
                     <div class="d-flex align-items-center justify-content-center">
                       <span class="badge bg-success me-2 badge-lg">등록일시</span>
                       <div class="d-flex me-2">
-                        <div class="text-secondary text-lg">{{ lib.formatDate(board.regDate) }}</div>
+                        <div class="text-secondary text-lg">{{ dateUtils.formatDate(board.regDate) }}</div>
                       </div>
                       <span class="badge bg-warning text-dark me-2 badge-lg">수정일시</span>
                       <div class="d-flex me-2">
-                        <div class="text-secondary text-lg">{{ board.modDate !== null ? lib.formatDate(board.modDate) : '없음' }}
+                        <div class="text-secondary text-lg">{{
+                            board.modDate !== null ? dateUtils.formatDate(board.modDate) : '없음'
+                          }}
                         </div>
                       </div>
                       <span class="badge bg-info text-dark me-2 badge-lg">조회수</span>

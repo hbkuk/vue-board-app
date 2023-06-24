@@ -1,23 +1,30 @@
-const lib = {
+const dateUtils = {
     /**
      * 현재 날짜를 가져오는 함수
      *
      * @returns {string} "YYYY-MM-DD" 형식의 날짜 문자열
      */
     getCurrentDate() {
-        return new Date().toISOString().slice(0, 10);
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     },
 
     /**
-     * 현재 날짜에서 일정 기간을 뺀 날짜를 계산하는 함수
+     * 지정된 날짜에서 일정 기간을 뺀 날짜를 계산하는 함수
      *
      * @param {number} period - 뺄 일 수
+     * @param {Date} [startDate=new Date()] - 기준 날짜 (기본값: 현재 날짜)
      * @returns {string} "YYYY-MM-DD" 형식의 날짜 문자열
      */
-    getPastDate(period) {
-        const startDate = new Date();
+    getPastDate(period, startDate = new Date()) {
         startDate.setDate(startDate.getDate() - period);
-        return startDate.toISOString().slice(0, 10);
+        const year = startDate.getFullYear();
+        const month = String(startDate.getMonth() + 1).padStart(2, '0');
+        const day = String(startDate.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     },
 
     /**
@@ -37,4 +44,4 @@ const lib = {
     }
 };
 
-export default lib;
+export default dateUtils;

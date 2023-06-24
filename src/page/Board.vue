@@ -1,6 +1,6 @@
 <script setup>
 import DataService from "@/service/DataService";
-import lib from "../script/lib";
+import dateUtils from "../script/DateUtils";
 import Comment from "@/components/Comment.vue";
 import WelcomeBanner from "@/components/WelcomeBanner.vue";
 import {defineProps} from "vue";
@@ -39,7 +39,7 @@ const { data: boardData, error: boardError } = DataService.fetchBoard(props.boar
                 <nav style="--bs-breadcrumb-divider: 'ㆍ';" aria-label="breadcrumb">
                   <ol class="breadcrumb">
                     <li class="breadcrumb-item text-secondary"> {{ boardData.board.writer }} </li>
-                    <li class="breadcrumb-item text-secondary">{{ lib.formatDate(boardData.board.regDate) }}</li>
+                    <li class="breadcrumb-item text-secondary">{{ dateUtils.formatDate(boardData.board.regDate) }}</li>
                     <li class="breadcrumb-item text-secondary" v-if="boardData.comments">댓글 {{ boardData.comments.length }}개</li>
                   </ol>
                 </nav>
