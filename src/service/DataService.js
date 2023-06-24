@@ -1,6 +1,7 @@
 import {useGetApiWithParams} from "@/composable/fetch/getApiWithParams";
 import {useGetApi} from "@/composable/fetch/getApi";
 import {usePutApi} from "@/composable/fetch/putApi";
+import {usePostApi} from "@/composable/fetch/postApi";
 
 /**
  * 데이터 서비스 함수
@@ -45,6 +46,15 @@ const DataService = {
      */
     fetchModifyBoard(boardIdx) {
         return useGetApi(`/api/board/modify/${boardIdx}`)
+    },
+
+    /**
+     * 게시물 작성을 위한 요청 함수
+     *
+     * @param formData 요청 데이터
+     */
+    fetchWriteAction(formData) {
+        return usePostApi(`/api/board`, `/board/`, formData)
     },
 
     /**
