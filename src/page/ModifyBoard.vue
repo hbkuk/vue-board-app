@@ -1,16 +1,23 @@
 <script setup>
 import DataService from "@/service/DataService";
-import router from "@/router/router";
 import lib from "@/script/lib";
 import WelcomeBanner from "@/components/WelcomeBanner.vue";
-import {useSubmitForm} from "@/composable/submitForm";
+import {useModifySubmitForm} from "@/composable/modifySubmitForm";
+import {defineProps} from "vue";
 
-const { data: modifyViewData, error: modifyViewError }
-    = DataService.fetchModifyBoard(router.currentRoute._value.params.boardIdx)
+const props = defineProps({
+  boardIdx: String,
+});
 
-const { board, submitError, handleFileUpload, getSubmitFormData, deleteFileByFileIdx }
-        = useSubmitForm(modifyViewData)
+/** DataService를 사용하여 modifyViewData를 가져옴 */
+const {data: modifyViewData, error: modifyViewError}
+    = DataService.fetchModifyBoard(props.boardIdx)
 
+/** useModifySubmitForm 컴포저블을 통해 게시글 수정에 필요한 함수와 상태를 가져옴 */
+const {board, submitError, useHandleFileUpload, useDeleteFileByFileIdx, getSubmitFormData}
+    = useModifySubmitForm(modifyViewData)
+
+/** 서버 데이터 전송 처리하는 함수 */
 const submitForm = () => {
   submitError.value = DataService.fetchModifyAction(board.value.boardIdx, getSubmitFormData())
 }
@@ -21,24 +28,18 @@ const submitForm = () => {
   <template v-if="board !== null">
     <WelcomeBanner :title="`함께 할 때 더 즐거운 순간`"
                    :subTitle="`다양한 사람을 만나고 생각의 폭을 넓혀보세요.`"/>
-    <!-- write -->
     <div class="container-fluid bg-white">
       <div class="container">
-        <!-- Title -->
         <div class="d-flex flex-row mt-3 mb-3">
-          <button type="button" class="btn btn-secondary btn-sm" @click="$router.push({name: 'Boards'})"><i
-              class="fa-solid fa-arrow-left"></i> 나가기
+          <button type="button" class="btn btn-secondary btn-sm" @click="$router.push({name: 'Boards'})"><i lass="fa-solid fa-arrow-left"></i> 나가기
           </button>
         </div>
         <div v-if="submitError !== null && submitError.error !== null" class="alert alert-danger text-center"
              role="alert">
           {{ submitError.error.detail }}
         </div>
-        <!-- Main content -->
         <div class="row">
-          <!-- Left side -->
           <div class="col">
-            <!-- Basic information -->
             <div class="card mb-4">
               <div class="card-body">
                 <h3 class="h6 mb-4"></h3>
@@ -52,9 +53,7 @@ const submitForm = () => {
                       </div>
                       <span class="badge bg-warning text-dark me-2 badge-lg">수정일시</span>
                       <div class="d-flex me-2">
-                        <div class="text-secondary text-lg">{{
-                            board.modDate !== null ? lib.formatDate(board.modDate) : '없음'
-                          }}
+                        <div class="text-secondary text-lg">{{ board.modDate !== null ? lib.formatDate(board.modDate) : '없음' }}
                         </div>
                       </div>
                       <span class="badge bg-info text-dark me-2 badge-lg">조회수</span>
@@ -110,7 +109,7 @@ const submitForm = () => {
                               ({{ file.fileSize }})
                             </div>
                             <button type="button" class="btn-close" aria-label="Delete"
-                                    @click="deleteFileByFileIdx(file.fileIdx)"></button>
+                                    @click="useDeleteFileByFileIdx(file.fileIdx)"></button>
                           </div>
                         </ul>
                       </div>
@@ -118,7 +117,7 @@ const submitForm = () => {
                       <div class="mb-5">
                         <label for="formFileMultiple" class="form-label">파일 업로드</label>
                         <input class="form-control" type="file" id="formFileMultiple" multiple ref="fileInput"
-                               @change="handleFileUpload">
+                               @change="useHandleFileUpload">
                       </div>
 
                       <div class="d-grid gap-2 mt-4">

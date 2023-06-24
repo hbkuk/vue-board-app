@@ -1,12 +1,19 @@
 import { computed, ref, watch } from 'vue'
 
-export function useSubmitForm(modifyViewData) {
+/**
+ * 게시글 수정 폼을 관리하는 컴포저블
+ *
+ * @param {object} modifyViewData - 수정할 게시글 데이터
+ * @returns {object} 게시글 수정 폼 관련 함수와 상태를 포함한 객체
+ */
+export function useModifySubmitForm(modifyViewData) {
     const board = ref(null) // 게시글 데이터
     const submitError = ref(null) // 제출 오류
-    let formData = ref(new FormData()) // 폼 데이터
+    const formData = ref(new FormData()) // 폼 데이터
 
     /**
-     * 파일 업로드를 처리하는 함수
+     * 업로드된 파일을 업데이트
+     *
      * @param {Event} event - 파일 업로드 이벤트
      */
     const handleFileUpload = (event) => {
@@ -15,7 +22,9 @@ export function useSubmitForm(modifyViewData) {
     }
 
     /**
-     * 폼을 제출하는 함수
+     * 서버로 전송할 폼 데이터 객체를 반환
+     *
+     * @returns {FormData} 폼 데이터 객체
      */
     function getSubmitFormData() {
         formData.value.append('fileIdx', fileIndexes.value)
@@ -24,7 +33,8 @@ export function useSubmitForm(modifyViewData) {
     }
 
     /**
-     * 파일 인덱스에 해당하는 파일을 삭제하는 함수
+     * 파일 인덱스에 해당하는 파일을 삭제
+     *
      * @param {number} fileIdx - 삭제할 파일의 인덱스
      */
     function deleteFileByFileIdx(fileIdx) {
@@ -32,7 +42,8 @@ export function useSubmitForm(modifyViewData) {
     }
 
     /**
-     * 파일의 인덱스를 계산된 속성으로 반환하는 함수
+     * 파일의 인덱스를 계산된 속성으로 반환
+     *
      * @returns {number[]} 파일의 인덱스 배열
      */
     const fileIndexes = computed(() => {
@@ -40,7 +51,8 @@ export function useSubmitForm(modifyViewData) {
     })
 
     /**
-     * modifyBoardData 객체를 감시하고 값이 변경될 때마다 boardData와 fileData에 새로운 값을 할당하는 함수
+     * modifyBoardData 객체를 감시하고 값이 변경될 때마다 boardData에 새로운 값을 할당
+     *
      * @param {object} newModifyBoardData - 변경된 modifyBoardData 객체
      */
     watch(modifyViewData, (newModifyBoardData) => {
@@ -48,7 +60,8 @@ export function useSubmitForm(modifyViewData) {
     })
 
     /**
-     * submitError 변수를 감시하고 값이 변경될 때마다 formData를 초기화하는 함수
+     * submitError 변수를 감시하고 값이 변경될 때마다 formData를 초기화
+     *
      * @param {object} newError - 변경된 submitError 객체
      */
     watch(submitError, (newError) => {
@@ -58,8 +71,8 @@ export function useSubmitForm(modifyViewData) {
     return {
         board,
         submitError,
-        handleFileUpload,
+        useHandleFileUpload: handleFileUpload,
+        useDeleteFileByFileIdx: deleteFileByFileIdx,
         getSubmitFormData,
-        deleteFileByFileIdx,
     }
 }
