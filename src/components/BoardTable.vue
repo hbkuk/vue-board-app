@@ -3,7 +3,7 @@ import dateUtils from "@/script/DateUtils";
 import {defineProps} from "vue";
 
 const props = defineProps({
-  boards: Array,
+  boards: Object,
 });
 </script>
 <template>

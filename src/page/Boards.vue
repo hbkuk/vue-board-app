@@ -50,7 +50,7 @@ const { data: categoriesData, error: categoriesError } = DataService.fetchCatego
 
   <!-- 조건부 렌더링 2: 서버 통신 fail -->
   <template v-else-if="boardsError !== null || categoriesError !== null">
-    <Error error="boardsError"/>
+    <Error :error="boardsError"/>
   </template>
 
   <!-- 조건부 렌더링 3: 서버 통신 delay -->
