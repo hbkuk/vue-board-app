@@ -4,6 +4,9 @@ import dateUtils from "@/script/DateUtils";
 import WelcomeBanner from "@/components/WelcomeBanner.vue";
 import {useModifySubmitForm} from "@/composable/submitForm/modifySubmitForm";
 import {defineProps} from "vue";
+import Error from "@/components/Error.vue";
+import Spinner from "@/components/Spinner.vue";
+import SubmitErr from "@/components/SubmitErr.vue";
 
 const props = defineProps({
   boardIdx: String,
@@ -25,18 +28,21 @@ const submitForm = () => {
 </script>
 
 <template>
+  <WelcomeBanner :title="`커뮤니티`"
+                 :subTitle="`다양한 사람을 만나고 ....`"/>
+
+  <!-- 조건부 렌더링: 게시글 작성 실패로 인한 Error Message -->
+  <template v-if="submitError !== null && submitError.error !== null">
+    <SubmitErr :submitError="submitError"/>
+  </template>
+
+  <!-- 조건부 렌더링 1: 서버 통신 success -->
   <template v-if="board !== null">
-    <WelcomeBanner :title="`커뮤니티`"
-                   :subTitle="`다양한 사람을 만나고 ....`"/>
     <div class="container-fluid bg-white">
       <div class="container">
         <div class="d-flex flex-row mt-3 mb-3">
           <button type="button" class="btn btn-secondary btn-sm" @click="$router.push({name: 'Boards'})"><i lass="fa-solid fa-arrow-left"></i> 나가기
           </button>
-        </div>
-        <div v-if="submitError !== null && submitError.error !== null" class="alert alert-danger text-center"
-             role="alert">
-          {{ submitError.error.detail }}
         </div>
         <div class="row">
           <div class="col">
@@ -134,12 +140,15 @@ const submitForm = () => {
       </div>
     </div>
   </template>
-  <template v-else-if="modifyViewError != null">
-    <div class="alert alert-danger text-center" role="alert">
-      {{ modifyViewError.detail }}
-    </div>
+
+  <!-- 조건부 렌더링 2: 서버 통신 fail -->
+  <template v-else-if="modifyViewError !== null">
+    <Error :error="modifyViewError"/>
   </template>
+
+  <!-- 조건부 렌더링 3: 서버 통신 delay -->
   <template v-else>
-    <div>로딩 중...</div>
+    <Spinner msg="게시글 가져오는 중 ..." />
   </template>
+
 </template>
