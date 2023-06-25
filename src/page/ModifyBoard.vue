@@ -26,8 +26,8 @@ const submitForm = () => {
 
 <template>
   <template v-if="board !== null">
-    <WelcomeBanner :title="`함께 할 때 더 즐거운 순간`"
-                   :subTitle="`다양한 사람을 만나고 생각의 폭을 넓혀보세요.`"/>
+    <WelcomeBanner :title="`커뮤니티`"
+                   :subTitle="`다양한 사람을 만나고 ....`"/>
     <div class="container-fluid bg-white">
       <div class="container">
         <div class="d-flex flex-row mt-3 mb-3">
@@ -53,9 +53,7 @@ const submitForm = () => {
                       </div>
                       <span class="badge bg-warning text-dark me-2 badge-lg">수정일시</span>
                       <div class="d-flex me-2">
-                        <div class="text-secondary text-lg">{{
-                            board.modDate !== null ? dateUtils.formatDate(board.modDate) : '없음'
-                          }}
+                        <div class="text-secondary text-lg">{{ board.modDate !== null ? dateUtils.formatDate(board.modDate) : '없음'}}
                         </div>
                       </div>
                       <span class="badge bg-info text-dark me-2 badge-lg">조회수</span>
@@ -123,8 +121,7 @@ const submitForm = () => {
                       </div>
 
                       <div class="d-grid gap-2 mt-4">
-                        <button type="button" class="btn btn-primary" @click="submitForm"><i
-                            class="fa-regular fa-circle-check"></i> 등록
+                        <button type="button" class="btn btn-primary" @click="submitForm"><i class="fa-regular fa-circle-check"></i> 등록
                         </button>
                       </div>
                     </form>

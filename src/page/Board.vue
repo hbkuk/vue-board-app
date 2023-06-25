@@ -9,13 +9,15 @@ const props = defineProps({
   boardIdx: String,
 });
 
+/** DataService를 사용하여 게시글을 가져옴 */
 const { data: boardData, error: boardError } = DataService.fetchBoard(props.boardIdx)
+
 </script>
 
 <template>
   <template v-if="boardData !== null">
     <WelcomeBanner :title="`커뮤니티`"
-                   :subTitle="`다양한 사람을 만나고 생각의 폭을 넓혀보세요.`"/>
+                   :subTitle="`다양한 사람을 만나고 ....`"/>
     <div class="board bg-white text-dark py-1 text-left">
       <div class="container mt-3">
         <div class="d-flex flex-row mt-3 mb-5">

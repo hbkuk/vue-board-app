@@ -20,8 +20,8 @@ const submitForm = () => {
 
 <template>
   <template v-if="writeViewData !== null">
-    <WelcomeBanner :title="`함께 할 때 더 즐거운 순간`"
-                   :subTitle="`다양한 사람을 만나고 생각의 폭을 넓혀보세요.`"/>
+    <WelcomeBanner :title="`커뮤니티`"
+                   :subTitle="`다양한 사람을 만나고 ....`"/>
     <div class="container-fluid bg-white">
       <div class="container">
         <div class="d-flex flex-row mt-3 mb-3">

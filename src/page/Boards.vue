@@ -8,7 +8,7 @@ import {useInitialCondition} from "@/composable/InitialCondition";
 import router from "@/router/router";
 import WelcomeBanner from "@/components/WelcomeBanner.vue";
 
-/** 검색 조건을 담는 변수 */
+/** 초기 검색 조건을 담는 반응성 객체 */
 const condition = ref({
   startDate: dateUtils.getPastDate(365),
   endDate: dateUtils.getCurrentDate(),
@@ -17,16 +17,19 @@ const condition = ref({
   pageNo: 1
 })
 
-Object.assign(condition.value, useInitialCondition(router, sessionStorage)); // 초기 검색 조건을 condition 값에 할당
+/** 현재 라우터의 파라미터와 sessionStorage를 확인해서 속성 덮어쓰기 */
+Object.assign(condition.value, useInitialCondition(router, sessionStorage));
 
+/** DataService를 사용하여 게시글 목록을 가져옴 */
 const { data: boardsData, error: boardsError } = DataService.fetchBoards(condition)
+
+/** DataService를 사용하여 카테고리 목록을 가져옴 */
 const { data: categoriesData, error: categoriesError } = DataService.fetchCategories()
 </script>
 
 <template>
   <WelcomeBanner :title="`커뮤니티`"
-                 :subTitle="`다양한 사람을 만나고 생각의 폭을 넓혀보세요.`"
-                 class="mb-3"/>
+                 :subTitle="`다양한 사람을 만나고 ....`"/>
   <template v-if="categoriesData !== null">
     <SearchBar :categories="categoriesData.categories"
                :condition="condition"
