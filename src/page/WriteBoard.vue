@@ -5,9 +5,10 @@ import {useWriteSubmitForm} from "@/composable/submitForm/writeSubmitForm";
 import Spinner from "@/components/Spinner.vue";
 import Error from "@/components/Error.vue";
 import SubmitErr from "@/components/SubmitErr.vue";
+import {store} from "@/script/store";
 
 
-/** DataService를 사용하여 writeViewData를 가져옴 */
+/** DataService를 사용하여 writeViewData를 가져옴 */ // TODO: 서비스명 명확하게 수정
 const { data: writeViewData, error: writeViewError } = DataService.fetchWriteBoard()
 
 /** useModifySubmitForm 컴포저블을 통해 게시글 수정에 필요한 함수와 상태를 가져옴 */
@@ -48,7 +49,7 @@ const submitForm = () => {
                       <label class="form-label">카테고리</label>
                       <select class="form-select" v-model="board.categoryIdx">
                         <option :value="null" selected>모든 카테고리</option>
-                        <option v-for="category in writeViewData" :value="category.categoryIdx" :key="category.categoryIdx">
+                        <option v-for="category in store.categories.categories" :value="category.categoryIdx" :key="category.categoryIdx">
                           {{ category.name }}
                         </option>
                       </select>

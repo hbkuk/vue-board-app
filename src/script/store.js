@@ -1,11 +1,8 @@
-import {createStore} from 'vuex';
-import dateUtils from "@/script/DateUtils";
+import {reactive, ref} from 'vue'
 
-/**
- * Vuex 스토어를 생성합니다.
- */
-const store = createStore({
-    state() {}
-});
-
-export default store;
+export const store = reactive({
+    categories: [],
+    updateCategories(newCategories) {
+        this.categories = newCategories
+    },
+})

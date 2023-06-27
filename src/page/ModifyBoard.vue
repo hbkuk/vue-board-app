@@ -7,6 +7,7 @@ import {defineProps} from "vue";
 import Error from "@/components/Error.vue";
 import Spinner from "@/components/Spinner.vue";
 import SubmitErr from "@/components/SubmitErr.vue";
+import {store} from "@/script/store";
 
 const props = defineProps({
   boardIdx: String,
@@ -72,7 +73,7 @@ const submitForm = () => {
                         <label class="form-label">카테고리</label>
                         <select class="form-select">
                           <option :value="null">모든 카테고리</option>
-                          <option v-for="category in modifyViewData.categories" :value="category.categoryIdx"
+                          <option v-for="category in store.categories.categories" :value="category.categoryIdx"
                                   :key="category.categoryIdx" :selected="board.categoryIdx === category.categoryIdx">
                             {{ category.name }}
                           </option>

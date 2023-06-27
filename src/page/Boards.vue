@@ -24,10 +24,7 @@ const condition = ref({
 Object.assign(condition.value, useInitialCondition(router, sessionStorage));
 
 /** DataService를 사용하여 게시글 목록을 가져옴 */
-const { data: boardsData, error: boardsError } = DataService.fetchBoards(condition)
-
-/** DataService를 사용하여 카테고리 목록을 가져옴 */
-const { data: categoriesData, error: categoriesError } = DataService.fetchCategories()
+const {data: boardsData, error: boardsError} = DataService.fetchBoards(condition)
 </script>
 
 <template>
@@ -35,12 +32,13 @@ const { data: categoriesData, error: categoriesError } = DataService.fetchCatego
                  :subTitle="`다양한 사람을 만나고 ....`"/>
 
   <!-- 조건부 렌더링 1: 서버 통신 success -->
-  <template v-if="boardsData !== null && categoriesData !== null" >
-    <SearchBar :categories="categoriesData.categories"
-               :condition="condition"
+  <template v-if="boardsData !== null">
+    <SearchBar :condition="condition"
                @updateSearchCondition="(updateSearchCondition) => condition = updateSearchCondition"/>
     <div class="container mt-3 mb-3">
-      <router-link class="btn btn-primary font-weight-bold btn-sm" :to="`/board/write`"><i class="fa-solid fa-pen"></i> 게시글 작성</router-link>
+      <router-link class="btn btn-primary font-weight-bold btn-sm" :to="`/board/write`"><i class="fa-solid fa-pen"></i>
+        게시글 작성
+      </router-link>
     </div>
     <div class="boards text-center">
       <BoardTable :boards="boardsData"/>
@@ -49,13 +47,13 @@ const { data: categoriesData, error: categoriesError } = DataService.fetchCatego
   </template>
 
   <!-- 조건부 렌더링 2: 서버 통신 fail -->
-  <template v-else-if="boardsError !== null || categoriesError !== null">
+  <template v-else-if="boardsError !== null">
     <Error :error="boardsError"/>
   </template>
 
   <!-- 조건부 렌더링 3: 서버 통신 delay -->
   <template v-else>
-    <Spinner msg="게시글 가져오는 중 ..." />
+    <Spinner msg="게시글 가져오는 중 ..."/>
   </template>
 
 </template>

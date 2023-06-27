@@ -1,11 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import dateUtils from "@/script/DateUtils";
+import {store} from "@/script/store";
 
 const emit = defineEmits(['updateSearchCondition'])
 
 const props = defineProps({
-  categories: Array,
   condition: Object,
 })
 
@@ -30,11 +30,10 @@ const cleanSearchCondition = () => {
   searchCondition.value.pageNo = 1;
   emit('updateSearchCondition', searchCondition.value)
 };
-
 </script>
 
 <template>
-  <template v-if="categories !== null">
+  <template v-if="store.categories.categories !== null">
     <div class="container">
       <div class="row">
         <div class="col-3 d-flex justify-content-start">
@@ -45,7 +44,7 @@ const cleanSearchCondition = () => {
           <select class="form-select me-2 text" v-model="searchCondition.categoryIdx" aria-label="Default select example"
                   style="max-width: 150px;">
             <option :value="null" selected>모든 카테고리</option>
-            <option v-for="category in categories" :value="category.categoryIdx" :key="category.categoryIdx">
+            <option v-for="category in store.categories.categories" :value="category.categoryIdx" :key="category.categoryIdx">
               {{ category.name }}
             </option>
           </select>
