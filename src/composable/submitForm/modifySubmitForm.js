@@ -8,7 +8,6 @@ import { computed, ref, watch } from 'vue'
  */
 export function useModifySubmitForm(modifyViewData) {
     const board = ref(null) // 게시글 데이터
-    const submitError = ref(null) // 제출 오류
     const formData = ref(new FormData()) // 폼 데이터
 
     /**
@@ -59,18 +58,8 @@ export function useModifySubmitForm(modifyViewData) {
         board.value = newModifyBoardData.board
     })
 
-    /**
-     * submitError 변수를 감시하고 값이 변경될 때마다 formData를 초기화
-     *
-     * @param {object} newError - 변경된 submitError 객체
-     */
-    watch(submitError, (newError) => {
-        formData.value = new FormData()
-    })
-
     return {
         board,
-        submitError,
         useHandleFileUpload: handleFileUpload,
         useDeleteFileByFileIdx: deleteFileByFileIdx,
         getSubmitFormData,

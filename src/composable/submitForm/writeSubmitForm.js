@@ -16,7 +16,6 @@ export function useWriteSubmitForm() {
         password: "qudrnr132!"
     })
 
-    const submitError = ref(null) // 제출 오류
     let formData = ref(new FormData()); // 폼 데이터
 
     /**
@@ -39,18 +38,8 @@ export function useWriteSubmitForm() {
         return formData.value
     }
 
-    /**
-     * submitError 변수를 감시하고 값이 변경될 때마다 formData를 초기화
-     *
-     * @param {object} newError - 변경된 submitError 객체
-     */
-    watch(submitError, (newError) => {
-        formData.value = new FormData()
-    })
-
     return {
         board,
-        submitError,
         useHandleFileUpload: handleFileUpload,
         getSubmitFormData,
     }

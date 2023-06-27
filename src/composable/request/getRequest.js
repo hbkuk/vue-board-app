@@ -13,9 +13,9 @@ import {useFilterParams} from "@/composable/filterParams";
  */
 export async function useGetRequest(url, params = null) {
     try {
-        const response = await axios.get(url, { params: useFilterParams(params) });
-        return { data: response.data, error: null };
+        const response = await axios.get(url, {params: useFilterParams(params)});
+        return {data: response.data, error: null};
     } catch (err) {
-        return { data: null, error: err.response.data };
+        return {data: null, error: err.response.data};
     }
 }

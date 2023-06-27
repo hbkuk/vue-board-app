@@ -8,9 +8,13 @@ import Error from "@/components/Error.vue";
 import Spinner from "@/components/Spinner.vue";
 import SubmitErr from "@/components/SubmitErr.vue";
 import {store} from "@/script/store";
+import router from "@/router/router";
 
 const modifyViewInfo = ref(null) /** 게시글 수정 정보를 담는 반응성 객체 */
 const modifyViewError = ref(null) /** 게시글 수정 정보를 가져올때 발생하는 에러를 담는 반응성 객체 */
+
+const submitData = ref(null) /** 게시글 수정 후 반환된 데이터를 담는 반응성 객체 */
+const submitError = ref(null) /** 게시글 수정 후 반환된 에러를 담는 반응성 객체 */
 
 const props = defineProps({ /** 전달받은 속성 */
   boardIdx: String,
@@ -33,12 +37,20 @@ async function getModifyViewInfo() {
 }
 
 /** useModifySubmitForm 컴포저블을 통해 게시글 수정에 필요한 함수와 상태를 가져옴 */
-const {board, submitError, useHandleFileUpload, useDeleteFileByFileIdx, getSubmitFormData}
+const {board, useHandleFileUpload, useDeleteFileByFileIdx, getSubmitFormData}
     = useModifySubmitForm(modifyViewInfo)
 
 /** 서버 데이터 전송 처리하는 함수 */
 async function submitForm() {
-  submitError.value = await DataService.fetchModifyAction(board.value.boardIdx, getSubmitFormData())
+  const {data, error} = await DataService.fetchModifyAction(board.value.boardIdx, getSubmitFormData())
+  if (data) {
+    submitData.value = data
+    submitError.value = null
+    await router.push({name: 'Board', params: {boardIdx: data.boardIdx}});
+  }
+  if (error) {
+    submitError.value = error
+  }
 }
 
 getModifyViewInfo()

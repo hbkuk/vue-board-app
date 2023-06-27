@@ -9,7 +9,7 @@ const props = defineProps({
 <template>
   <div class="container">
     <div class="alert alert-danger text-center">
-      {{ submitError.error.detail }}
+      {{ submitError.detail }}
     </div>
   </div>
 </template>
