@@ -1,7 +1,7 @@
 import {useGetRequest} from "@/composable/request/getRequest";
-import {usePutRequest} from "@/composable/request/putRequest";
-import {usePostRequest} from "@/composable/request/postRequest";
+import {useHttpRequest} from "@/composable/request/httpRequest";
 import {multipart} from "@/composable/request/headers";
+import {HttpMethod} from "@/composable/request/httpMethod";
 
 
 /**
@@ -56,7 +56,7 @@ const DataService = {
      * @param formData 요청 데이터
      */
     fetchWriteAction(formData) {
-        return usePostRequest(`/api/board`, `/board/`, formData, multipart)
+        return useHttpRequest(HttpMethod.POST, `/api/board`, formData, multipart)
     },
 
     /**
@@ -66,7 +66,7 @@ const DataService = {
      * @param formData 요청 데이터
      */
     fetchModifyAction(boardIdx, formData) {
-        return usePutRequest(`/api/board/${boardIdx}`, `/board/${boardIdx}`, formData, multipart)
+        return useHttpRequest(HttpMethod.PUT,`/api/board/${boardIdx}`, formData, multipart)
     },
 
     /**
