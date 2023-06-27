@@ -8,5 +8,5 @@ import {useFilterParams} from "@/composable/filterParams";
  * @param object 쿼리스트링 생성에 사용할 객체
  */
 export function useUpdateUrl(url, object) {
-    window.history.replaceState(null, "", `${url}?${useObjectToQueryString(useFilterParams(object))}`)
+    window.history.replaceState(history.state, "", `${url}?${useObjectToQueryString(useFilterParams(object))}`)
 }
