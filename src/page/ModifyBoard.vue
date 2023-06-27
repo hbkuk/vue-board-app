@@ -3,28 +3,45 @@ import DataService from "@/service/DataService";
 import dateUtils from "@/script/DateUtils";
 import WelcomeBanner from "@/components/WelcomeBanner.vue";
 import {useModifySubmitForm} from "@/composable/submitForm/modifySubmitForm";
-import {defineProps} from "vue";
+import {defineProps, ref} from "vue";
 import Error from "@/components/Error.vue";
 import Spinner from "@/components/Spinner.vue";
 import SubmitErr from "@/components/SubmitErr.vue";
 import {store} from "@/script/store";
 
-const props = defineProps({
+const modifyViewInfo = ref(null) /** 게시글 수정 정보를 담는 반응성 객체 */
+const modifyViewError = ref(null) /** 게시글 수정 정보를 가져올때 발생하는 에러를 담는 반응성 객체 */
+
+const props = defineProps({ /** 전달받은 속성 */
   boardIdx: String,
 });
 
-/** DataService를 사용하여 modifyViewData를 가져옴 */
-const {data: modifyViewData, error: modifyViewError}
-    = DataService.fetchModifyBoard(props.boardIdx)
+/**
+ * 게시글 수정 정보를 가져오는 함수
+ *
+ * @returns {Promise<void>}
+ */
+async function getModifyViewInfo() {
+  const { data, error } = await DataService.fetchModifyView(props.boardIdx)
+  if(data) {
+    modifyViewInfo.value = data
+    modifyViewError.value = null
+  }
+  if(error) {
+    modifyViewError.value = error
+  }
+}
 
 /** useModifySubmitForm 컴포저블을 통해 게시글 수정에 필요한 함수와 상태를 가져옴 */
 const {board, submitError, useHandleFileUpload, useDeleteFileByFileIdx, getSubmitFormData}
-    = useModifySubmitForm(modifyViewData)
+    = useModifySubmitForm(modifyViewInfo)
 
 /** 서버 데이터 전송 처리하는 함수 */
-const submitForm = () => {
-  submitError.value = DataService.fetchModifyAction(board.value.boardIdx, getSubmitFormData())
+async function submitForm() {
+  submitError.value = await DataService.fetchModifyAction(board.value.boardIdx, getSubmitFormData())
 }
+
+getModifyViewInfo()
 
 </script>
 
@@ -151,5 +168,4 @@ const submitForm = () => {
   <template v-else>
     <Spinner msg="게시글 가져오는 중 ..." />
   </template>
-
 </template>

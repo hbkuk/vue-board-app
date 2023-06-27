@@ -1,21 +1,35 @@
 <script setup>
 import DataService from "@/service/DataService";
 import WelcomeBanner from "@/components/WelcomeBanner.vue";
-import {defineProps, watch} from "vue";
+import {defineProps, ref} from "vue";
 import BoardDetail from "@/components/BoardArticle.vue";
 import Spinner from "@/components/Spinner.vue";
 import Error from "@/components/Error.vue";
 
-const props = defineProps({
+const boardData = ref(null) /** 게시글 정보를 담는 반응성 객체 */
+const boardError = ref(null) /** 게시글 정보를 가져올때 발생하는 에러를 담는 반응성 객체 */
+
+const props = defineProps({ /** 전달받은 속성 */
   boardIdx: String,
 });
 
-/** DataService를 사용하여 게시글을 가져옴 */
-const { data: boardData, error: boardError } = DataService.fetchBoard(props.boardIdx)
+/**
+ * 게시글 정보를 가져오는 함수
+ *
+ * @returns {Promise<void>}
+ */
+async function getBoard() {
+  const { data, error } = await DataService.fetchBoard(props.boardIdx)
+  if(data) {
+    boardData.value = data
+    boardError.value = null
+  }
+  if(error) {
+    boardError.value = error
+  }
+}
 
-watch(boardError, (boardError) =>{
-  console.log(boardError)
-})
+getBoard()
 </script>
 
 <template>

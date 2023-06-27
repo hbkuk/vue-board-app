@@ -6,19 +6,37 @@ import Spinner from "@/components/Spinner.vue";
 import Error from "@/components/Error.vue";
 import SubmitErr from "@/components/SubmitErr.vue";
 import {store} from "@/script/store";
+import {ref} from "vue";
 
+const writeViewInfo = ref(null) /** 게시글 작성을 위한 데이터를 담는 반응성 객체 */
+const writeViewError = ref(null) /** 게시글 작성을 위한 데이터를 가져올때 발생하는 에러를 담는 반응성 객체 */
 
-/** DataService를 사용하여 writeViewData를 가져옴 */ // TODO: 서비스명 명확하게 수정
-const { data: writeViewData, error: writeViewError } = DataService.fetchWriteBoard()
+/**
+ * 게시글 작성을 위한 데이터를 가져오는 함수
+ *
+ * @returns {Promise<void>}
+ */
+async function getWriteViewInfo() {
+  const { data, error } = await DataService.fetchWriteView()
+  if(data) {
+    writeViewInfo.value = data
+    writeViewError.value = null
+  }
+  if(error) {
+    writeViewError.value = error
+  }
+}
 
 /** useModifySubmitForm 컴포저블을 통해 게시글 수정에 필요한 함수와 상태를 가져옴 */
 const {board, submitError, useHandleFileUpload, getSubmitFormData}
     = useWriteSubmitForm()
 
 /** 서버 데이터 전송 처리하는 함수 */
-const submitForm = () => {
-  submitError.value = DataService.fetchWriteAction(getSubmitFormData())
+async function submitForm() {
+  submitError.value = await DataService.fetchWriteAction(getSubmitFormData())
 }
+
+getWriteViewInfo();
 
 </script>
 
@@ -32,7 +50,7 @@ const submitForm = () => {
   </template>
 
   <!-- 조건부 렌더링 1: 서버 통신 success -->
-  <template v-if="writeViewData !== null">
+  <template v-if="writeViewInfo !== null">
     <div class="container-fluid bg-white">
       <div class="container">
         <div class="d-flex flex-row mt-3 mb-3">

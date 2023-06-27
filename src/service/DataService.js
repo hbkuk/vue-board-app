@@ -33,7 +33,7 @@ const DataService = {
      * @param boardIdx 게시물 번호
      * @returns {{data, error}}
      */
-    fetchWriteBoard() {
+    fetchWriteView() {
         return useGetRequest('/api/board/write')
     },
 
@@ -43,7 +43,7 @@ const DataService = {
      * @param boardIdx 게시물 번호
      * @returns {{data, error}}
      */
-    fetchModifyBoard(boardIdx) {
+    fetchModifyView(boardIdx) {
         return useGetRequest(`/api/board/modify/${boardIdx}`)
     },
 

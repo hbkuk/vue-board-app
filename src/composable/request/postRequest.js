@@ -10,25 +10,21 @@ import {ref} from "vue";
  * @param {Object} formData - API 요청에 사용되는 데이터 객체
  * @returns {object} - 에러 객체 혹은 Null
  */
-export function usePostRequest(url, successRouterPath, formData) {
-    const error = ref(null)
+export async function usePostRequest(url, successRouterPath, formData) {
+    let error = null;
 
-    async function fetchRequest() {
-        error.value = null
-
-        try {
-            const response = await axios.post(url, formData, {
-                headers: {
-                    "Content-Type": `multipart/form-data`
-                }
-            })
-            await router.push(successRouterPath + `${response.data.boardIdx}`);
-            return null;
-        } catch (err) {
-            console.log(err)
-            error.value = err.response.data
-        }
+    try {
+        const response = await axios.post(url, formData, {
+            headers: {
+                "Content-Type": `multipart/form-data`
+            }
+        })
+        await router.push(successRouterPath + `${response.data.boardIdx}`); // TODO: WriterBoard 컴포넌트로 책임 위임 고려
+        return null;
+    } catch (err) {
+        console.log(err)
+        error = err.response.data
     }
-    fetchRequest()
+
     return {error};
 }
