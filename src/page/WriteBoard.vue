@@ -35,7 +35,7 @@ async function getWriteViewInfo() {
 }
 
 /** useWriteSubmitForm 컴포저블을 통해 게시글 수정에 필요한 함수와 상태를 가져옴 */
-const {board, useHandleFileUpload, getSubmitFormData}
+const {board, useInitializeFormData, useHandleFileUpload, getSubmitFormData}
     = useWriteSubmitForm()
 
 /** 서버 데이터 전송 처리하는 함수 */
@@ -48,6 +48,7 @@ async function submitForm() {
   }
   if (error) {
     submitError.value = error
+    useInitializeFormData()
   }
 }
 

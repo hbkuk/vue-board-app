@@ -1,4 +1,4 @@
-import {ref, watch} from 'vue'
+import {ref} from 'vue'
 
 /**
  * 게시글 작성 폼을 관리하는 컴포저블
@@ -7,16 +7,15 @@ import {ref, watch} from 'vue'
  * @returns {object} 게시글 작성 폼 관련 함수와 상태를 포함한 객체
  */
 export function useWriteSubmitForm() {
-    //const board = ref({categoryIdx: null}) // 게시글 데이터
-    const board = ref({
-        categoryIdx: 10,
-        title: "최초 제목1",
-        writer: "테스터1",
-        content: "최초 내용1",
-        password: "qudrnr132!"
-    })
+    const board = ref({categoryIdx: null}) // 게시글 데이터
+    const formData = ref(new FormData()); // 폼 데이터
 
-    let formData = ref(new FormData()); // 폼 데이터
+    /**
+     * 새로운 FormData 객체를 생성하여 할당
+     */
+    function initializeFormData() {
+        formData.value = new FormData();
+    }
 
     /**
      * 업로드된 파일을 업데이트
@@ -40,6 +39,7 @@ export function useWriteSubmitForm() {
 
     return {
         board,
+        useInitializeFormData: initializeFormData,
         useHandleFileUpload: handleFileUpload,
         getSubmitFormData,
     }

@@ -10,6 +10,14 @@ export function useModifySubmitForm(modifyViewData) {
     const board = ref(null) // 게시글 데이터
     const formData = ref(new FormData()) // 폼 데이터
 
+
+    /**
+     * 새로운 FormData 객체를 생성하여 할당
+     */
+    function InitializeFormData() {
+        formData.value = new FormData();
+    }
+
     /**
      * 업로드된 파일을 업데이트
      *
@@ -60,6 +68,7 @@ export function useModifySubmitForm(modifyViewData) {
 
     return {
         board,
+        useInitializeFormData: InitializeFormData,
         useHandleFileUpload: handleFileUpload,
         useDeleteFileByFileIdx: deleteFileByFileIdx,
         getSubmitFormData,
