@@ -3,7 +3,7 @@ import { ref } from "vue";
 import dateUtils from "@/script/DateUtils";
 import {store} from "@/script/store";
 
-const emit = defineEmits(['updateSearchCondition'])
+const emit = defineEmits(['search'])
 
 const props = defineProps({
   condition: Object,
@@ -28,7 +28,7 @@ const cleanSearchCondition = () => {
   searchCondition.value.categoryIdx = null;
   searchCondition.value.keyword = null;
   searchCondition.value.pageNo = 1;
-  emit('updateSearchCondition', searchCondition.value)
+  emit('search', searchCondition.value)
 };
 </script>
 
@@ -50,7 +50,7 @@ const cleanSearchCondition = () => {
           </select>
           <input class="form-control me-2" type="text" v-model="searchCondition.keyword" placeholder="게시글 검색"
                  style="max-width: 300px;">
-          <button class="btn btn-primary btn-sm text-nowrap" @click="$emit('updateSearchCondition', searchCondition)">검색</button>&nbsp;
+          <button class="btn btn-primary btn-sm text-nowrap" @click="$emit('search', searchCondition)">검색</button>&nbsp;
           <button class="btn btn-danger btn-sm text-nowrap" @click="cleanSearchCondition">검색 초기화</button>
         </div>
       </div>
