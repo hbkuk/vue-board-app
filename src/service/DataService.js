@@ -1,4 +1,3 @@
-import {useGetRequestWithParams} from "@/composable/request/getRequestWithParams";
 import {useGetRequest} from "@/composable/request/getRequest";
 import {usePutRequest} from "@/composable/request/putRequest";
 import {usePostRequest} from "@/composable/request/postRequest";
@@ -15,7 +14,7 @@ const DataService = {
      * @returns {{data, error}} - 게시판 목록
      */
     fetchBoards(condition) {
-        return useGetRequestWithParams('/api/boards', condition)
+        return useGetRequest('/api/boards', condition)
     },
 
     /**

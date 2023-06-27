@@ -46,7 +46,6 @@ async function searchBoards(condition) {
     boardsError.value = error
     useUpdateUrl("/boards", initialCondition.value);
     useUpdateSessionStorage('condition', initialCondition.value);
-
   }
 }
 
