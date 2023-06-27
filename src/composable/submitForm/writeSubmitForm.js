@@ -15,6 +15,7 @@ export function useWriteSubmitForm() {
         content: "최초 내용1",
         password: "qudrnr132!"
     })
+
     const submitError = ref(null) // 제출 오류
     let formData = ref(new FormData()); // 폼 데이터
 

@@ -7,7 +7,7 @@ import axios from 'axios'
  * @param {string} url - API 엔드포인트 URL
  * @returns {object} - 가져온 데이터와 에러를 포함하는 객체
  */
-export function useGetApi(url) {
+export function useGetRequest(url, param = null) {
     const data = ref(null)
     const error = ref(null)
 
@@ -16,7 +16,7 @@ export function useGetApi(url) {
      *
      * @async
      */
-    async function fetchData() {
+    async function fetchRequest() {
         data.value = null
         error.value = null
 
@@ -28,6 +28,6 @@ export function useGetApi(url) {
             error.value = err.response.data // 상태코드 200번외의 응답에 대한 처리
         }
     }
-    fetchData()
+    fetchRequest()
     return { data, error }
 }

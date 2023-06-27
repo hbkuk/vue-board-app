@@ -10,10 +10,10 @@ import {ref} from "vue";
  * @param {Object} formData - API 요청에 사용되는 데이터 객체
  * @returns {object} - 에러 객체 혹은 Null
  */
-export function usePutApi(url, successRouterPath, formData) {
+export function usePutRequest(url, successRouterPath, formData) {
     const error = ref(null)
 
-    async function fetchData() {
+    async function fetchRequest() {
         error.value = null
 
         try {
@@ -29,7 +29,7 @@ export function usePutApi(url, successRouterPath, formData) {
             error.value = err.response.data
         }
     }
-    fetchData()
+    fetchRequest()
 
     return { error };
 }

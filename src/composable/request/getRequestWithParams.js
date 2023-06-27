@@ -11,7 +11,7 @@ import { useFilterParams } from '@/composable/filterParams'
  * @param {Object} params - API 요청에 사용되는 반응형 파라미터 (선택적)
  * @returns {object} - 가져온 데이터와 에러를 포함하는 객체
  */
-export function useGetApiWithParams(url, routerPath, params) {
+export function useGetRequestWithParams(url, routerPath, params) {
     const data = ref(null)
     const error = ref(null)
 
@@ -19,13 +19,14 @@ export function useGetApiWithParams(url, routerPath, params) {
      * 데이터를 가져오는 작업을 수행합니다.
      * @async
      */
-    async function fetchData() {
+    async function fetchRequest() {
         data.value = null
         error.value = null
 
         try {
             //axios => 200번대 응답만을 성공으로 처리
             const response = await axios.get(url, { params: useFilterParams(unref(params)) }) // axios 기반 GET 요청
+            
             await router.push({ path: routerPath, query: useFilterParams(unref(params)) }) // 라우터 네비게이션을 위해 URL 변경
             sessionStorage.setItem('condition', JSON.stringify(useFilterParams(unref(params)))) // TODO: startDate=2022-06-22&endDate=2023-06-22&pageNo=1&ddd=3 => 허용되지 않는 조건에 대한 처리
             data.value = response.data
@@ -35,9 +36,9 @@ export function useGetApiWithParams(url, routerPath, params) {
     }
 
     if (isRef(params)) {
-        watchEffect(fetchData) // params가 ref인 경우에만 감시
+        watchEffect(fetchRequest) // params가 ref인 경우에만 감시
     } else {
-        fetchData() // 아닌 경우에는 초기에 한 번
+        fetchRequest() // 아닌 경우에는 초기에 한 번
     }
 
     return { data, error }

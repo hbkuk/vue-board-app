@@ -1,7 +1,7 @@
-import {useGetApiWithParams} from "@/composable/fetch/getApiWithParams";
-import {useGetApi} from "@/composable/fetch/getApi";
-import {usePutApi} from "@/composable/fetch/putApi";
-import {usePostApi} from "@/composable/fetch/postApi";
+import {useGetRequestWithParams} from "@/composable/request/getRequestWithParams";
+import {useGetRequest} from "@/composable/request/getRequest";
+import {usePutRequest} from "@/composable/request/putRequest";
+import {usePostRequest} from "@/composable/request/postRequest";
 
 /**
  * 데이터 서비스 함수
@@ -15,7 +15,7 @@ const DataService = {
      * @returns {{data, error}} - 게시판 목록
      */
     fetchBoards(condition) {
-        return useGetApiWithParams('/api/boards', '/boards', condition)
+        return useGetRequestWithParams('/api/boards', '/boards', condition)
     },
 
     /**
@@ -25,7 +25,7 @@ const DataService = {
      * @returns {{data, error}}
      */
     fetchBoard(boardIdx) {
-        return useGetApi(`/api/board/${boardIdx}`)
+        return useGetRequest(`/api/board/${boardIdx}`)
     },
 
     /**
@@ -35,7 +35,7 @@ const DataService = {
      * @returns {{data, error}}
      */
     fetchWriteBoard() {
-        return useGetApi('/api/board/write')
+        return useGetRequest('/api/board/write')
     },
 
     /**
@@ -45,7 +45,7 @@ const DataService = {
      * @returns {{data, error}}
      */
     fetchModifyBoard(boardIdx) {
-        return useGetApi(`/api/board/modify/${boardIdx}`)
+        return useGetRequest(`/api/board/modify/${boardIdx}`)
     },
 
     /**
@@ -54,7 +54,7 @@ const DataService = {
      * @param formData 요청 데이터
      */
     fetchWriteAction(formData) {
-        return usePostApi(`/api/board`, `/board/`, formData)
+        return usePostRequest(`/api/board`, `/board/`, formData)
     },
 
     /**
@@ -64,7 +64,7 @@ const DataService = {
      * @param formData 요청 데이터
      */
     fetchModifyAction(boardIdx, formData) {
-        return usePutApi(`/api/board/${boardIdx}`, `/board/${boardIdx}`, formData)
+        return usePutRequest(`/api/board/${boardIdx}`, `/board/${boardIdx}`, formData)
     },
 
     /**
@@ -73,7 +73,7 @@ const DataService = {
      * @returns {{data, error}} - 카테고리 목록
      */
     fetchCategories() {
-        return useGetApi('/api/categories')
+        return useGetRequest('/api/categories')
     },
 };
 
