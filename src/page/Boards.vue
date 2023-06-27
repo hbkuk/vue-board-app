@@ -10,10 +10,14 @@ import WelcomeBanner from "@/components/WelcomeBanner.vue";
 import BoardTable from "@/components/BoardTable.vue";
 import Error from "@/components/Error.vue";
 import Spinner from "@/components/Spinner.vue";
-import {useFilterParams} from "@/composable/filterParams";
+import {useUpdateUrl} from "@/composable/updateUrl";
+import {useUpdateSessionStorage} from "@/composable/updateSessionStorage";
 
-/** 초기 검색 조건을 담는 반응성 객체 */
-const initialCondition = ref({
+
+const boardsData = ref(null) /** 게시글 목록을 담는 반응성 객체 */
+const boardsError = ref(null) /** 게시글 목록을 가져올때 발생하는 에러를 담는 반응성 객체 */
+
+const initialCondition = ref({ /** 초기 검색 조건을 담는 반응성 객체 */
   startDate: dateUtils.getPastDate(365),
   endDate: dateUtils.getCurrentDate(),
   categoryIdx: null,
@@ -21,25 +25,29 @@ const initialCondition = ref({
   pageNo: 1
 })
 
-/** 현재 라우터의 파라미터와 sessionStorage를 확인해서 속성 덮어쓰기 */
+/** 현재 라우터의 파라미터와 sessionStorage 확인 후 initialCondition 속성 덮어쓰기 */
 Object.assign(initialCondition.value, useInitialCondition(router, sessionStorage));
 
-const boardsData = ref(null)
-const boardsError = ref(null)
-
 /**
- * 검색 실행 함수
+ * 게시판 검색을 실행하는 함수
  *
  * @param {Record<string, any>} condition - 검색 조건 객체
  * @returns {Promise<void>}
  */
 async function searchBoards(condition) {
   const {data, error} = await DataService.fetchBoards(condition)
-  boardsData.value = data
-  boardsError.value = error
+  if(data) {
+    boardsData.value = data
+    boardsError.value = null
+    useUpdateUrl("/boards", condition);
+    useUpdateSessionStorage('condition', condition);
+  }
+  if(error) {
+    boardsError.value = error
+    useUpdateUrl("/boards", initialCondition.value);
+    useUpdateSessionStorage('condition', initialCondition.value);
 
-  window.history.pushState(null, "", `/boards?${objectToQueryString(useFilterParams(condition))}`)
-  sessionStorage.setItem('condition', JSON.stringify(useFilterParams(condition)))
+  }
 }
 
 /**
@@ -52,22 +60,6 @@ function changePage(pageNo) {
   searchBoards(initialCondition.value)
 }
 
-/**
- * 객체를 쿼리스트링으로 변환하는 함수
- *
- * @param {Record<string, any>} obj - 변환할 객체
- * @returns {string} - 변환된 쿼리스트링
- */
-function objectToQueryString(obj) {
-  const queryParams = new URLSearchParams();
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key) && obj[key] !== null && obj[key] !== undefined) {
-      queryParams.append(key, obj[key]);
-    }
-  }
-  return queryParams.toString();
-}
-
 searchBoards(initialCondition.value)
 
 </script>
@@ -75,7 +67,12 @@ searchBoards(initialCondition.value)
   <WelcomeBanner :title="`커뮤니티`"
                  :sub-title="`다양한 사람을 만나고 ....`"/>
 
-  <!-- 조건부 렌더링 1: 서버 통신 success -->
+  <!-- 조건부 렌더링 1: 서버 통신 fail -->
+  <template v-if="boardsError !== null">
+    <Error :error="boardsError" />
+  </template>
+
+  <!-- 조건부 렌더링 2: 서버 통신 success -->
   <template v-if="boardsData !== null">
     <SearchBar :condition="initialCondition"
                @search="(updateSearchCondition) => searchBoards(updateSearchCondition)"/>
@@ -89,11 +86,6 @@ searchBoards(initialCondition.value)
     </div>
     <Pagination :pagination="boardsData.pagination"
                 @changePageNo="(changePageNo) => changePage(changePageNo)" />
-  </template>
-
-  <!-- 조건부 렌더링 2: 서버 통신 fail -->
-  <template v-else-if="boardsError !== null">
-    <Error :error="boardsError" />
   </template>
 
   <!-- 조건부 렌더링 3: 서버 통신 delay -->
