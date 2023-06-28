@@ -1,10 +1,13 @@
-import {createApp} from 'vue';
-import App from './App.vue';
+import { createApp } from 'vue'
+import App from './App.vue'
 import router from "@/router/router";
+import BootstrapVue3 from 'bootstrap-vue-3'
 
-/**
- * Vue 애플리케이션을 생성하고, 라우터와 상태 관리(store)를 등록하여 마운트합니다.
- */
-createApp(App)
-    .use(router)
-    .mount('#app');
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
+
+
+const app = createApp(App)
+app.use(BootstrapVue3)
+app.use(router)
+app.mount('#app')
