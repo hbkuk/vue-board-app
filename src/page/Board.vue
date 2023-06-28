@@ -8,11 +8,15 @@ import Error from "@/components/Error.vue";
 import router from "@/router/router";
 import Comment from "@/components/Comment.vue";
 import {useHideElement} from "@/composable/elementControll/hideElement";
+import {useDeleteBoardModal} from "@/composable/modal/deleteBoardModal";
 
-const boardData = ref(null) /** 게시글 정보를 담는 반응성 객체 */
-const boardError = ref(null) /** 게시글 정보를 가져올때 발생하는 에러를 담는 반응성 객체 */
+const boardData = ref(null)
+/** 게시글 정보를 담는 반응성 객체 */
+const boardError = ref(null)
+/** 게시글 정보를 가져올때 발생하는 에러를 담는 반응성 객체 */
 
-const props = defineProps({ /** 전달받은 속성 */
+const props = defineProps({
+  /** 전달받은 속성 */
   boardIdx: String,
 });
 
@@ -22,41 +26,36 @@ const props = defineProps({ /** 전달받은 속성 */
  * @returns {Promise<void>}
  */
 async function getBoard() {
-  const { data, error } = await DataService.fetchBoard(props.boardIdx)
-  if(data) {
+  const {data, error} = await DataService.fetchBoard(props.boardIdx)
+  if (data) {
     boardData.value = data
     boardError.value = null
   }
-  if(error) {
+  if (error) {
     boardError.value = error
   }
 }
 
-const submitData = ref(null) /** 게시글 삭제 후 반환된 데이터를 담는 반응성 객체 */
+const submitData = ref(null)
+/** 게시글 삭제 후 반환된 데이터를 담는 반응성 객체 */
 const submitError = ref(null) /** 게시글 삭제 후 반환된 에러를 담는 반응성 객체 */
 
-const modalShow = ref(false)
-const password = ref('')
+/** useDeleteBoardModal 컴포저블을 통해 게시글 삭제에 필요한 함수와 상태를 가져옴 */
+const {modalShow, password, resetPassword}
+    = useDeleteBoardModal()
 
 /**
- * 비밀번호 초기화 함수
- */
-function resetPassword() {
-  password.value = ''
-}
-
-/**
- * 확인 버튼 핸들러
+ * 게시글 삭제 확인 버튼 함수
  *
  * @param {Event} bvModalEvent - 모달 이벤트 객체
  */
 function handleOk(bvModalEvent) {
   bvModalEvent.preventDefault()
-  handleSubmit(bvModalEvent)
+  handleSubmit()
 }
 
 /**
- * 폼 제출 핸들러
+ * 게시글 삭제 제출 함수
  */
 async function handleSubmit() {
   const formData = new FormData // 폼 데이터
@@ -69,7 +68,7 @@ async function handleSubmit() {
    * @property {any} data - 서버 응답 데이터
    * @property {Error} error - 서버 에러 객체
    */
-  const { data, error } = await DataService.fetchDeleteAction(props.boardIdx, formData)
+  const {data, error} = await DataService.fetchDeleteAction(props.boardIdx, formData)
   if (error) {
     submitError.value = error
   } else {
@@ -81,6 +80,7 @@ async function handleSubmit() {
     await router.push({name: 'Boards'});
   }
 }
+
 
 getBoard()
 </script>
@@ -94,7 +94,9 @@ getBoard()
     <BoardDetail :boardData="boardData">
       <div class="d-flex justify-content-between">
         <b-button @click="modalShow = true" class="btn btn-danger font-weight-bold btn-sm">게시글 삭제</b-button>
-        <router-link class="btn btn-secondary font-weight-bold btn-sm" :to="`/board/modify/${boardData.board.boardIdx}`">게시글 수정</router-link>
+        <router-link class="btn btn-secondary font-weight-bold btn-sm"
+                     :to="`/board/modify/${boardData.board.boardIdx}`">게시글 수정
+        </router-link>
       </div>
       <Comment v-if="boardData" :comments="boardData.board.comments"/>
     </BoardDetail>
@@ -107,24 +109,24 @@ getBoard()
 
   <!-- 조건부 렌더링 3: 서버 통신 delay -->
   <template v-else>
-    <Spinner msg="게시글 가져오는 중 ..." />
+    <Spinner msg="게시글 가져오는 중 ..."/>
   </template>
 
   <!-- 모달 -->
   <b-modal id="deleteModal" ref="modal" title="게시글 삭제 요청"
-    v-model="modalShow"
-    @show="resetPassword"
-    @hidden="resetPassword"
-    @ok="handleOk"
-    cancel-title="취소하기"
-    ok-title="삭제하기">
+           v-model="modalShow"
+           @show="resetPassword"
+           @hidden="resetPassword"
+           @ok="handleOk"
+           cancel-title="취소하기"
+           ok-title="삭제하기">
     <form ref="form">
       <b-form-group label="password" label-for="password-input" invalid-feedback="password is required">
         <b-form-input
-          type="password"
-          id="password-input"
-          v-model="password"
-          required
+            type="password"
+            id="password-input"
+            v-model="password"
+            required
         ></b-form-input>
       </b-form-group>
     </form>
