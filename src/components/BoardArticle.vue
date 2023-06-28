@@ -42,7 +42,7 @@ const props = defineProps({
               </div>
 
               <ul class="list-group list-group-light">
-                <li v-for="file in boardData.files" :key="file.fileIdx" class="list-group-item list-group-item-action px-3 border-0 ripple">
+                <li v-for="file in boardData.board.files" :key="file.fileIdx" class="list-group-item list-group-item-action px-3 border-0 ripple">
                   <a :href="`/download/${file.fileIdx}`" class="text-decoration-none text-dark">{{ file.originalName }} ({{ file.fileSize }})</a>
                 </li>
               </ul>
@@ -50,7 +50,6 @@ const props = defineProps({
             </div>
           </article>
           <slot></slot>
-          <Comment v-if="boardData.comments" :comments="boardData.comments"/>
         </div>
       </div>
     </div>

@@ -6,6 +6,8 @@ import BoardDetail from "@/components/BoardArticle.vue";
 import Spinner from "@/components/Spinner.vue";
 import Error from "@/components/Error.vue";
 import router from "@/router/router";
+import Comment from "@/components/Comment.vue";
+import {useHideElement} from "@/composable/elementControll/hideElement";
 
 const boardData = ref(null) /** 게시글 정보를 담는 반응성 객체 */
 const boardError = ref(null) /** 게시글 정보를 가져올때 발생하는 에러를 담는 반응성 객체 */
@@ -36,19 +38,37 @@ const submitError = ref(null) /** 게시글 삭제 후 반환된 에러를 담�
 const modalShow = ref(false)
 const password = ref('')
 
-function resetModal() {
+/**
+ * 비밀번호 초기화 함수
+ */
+function resetPassword() {
   password.value = ''
 }
 
+/**
+ * 확인 버튼 핸들러
+ *
+ * @param {Event} bvModalEvent - 모달 이벤트 객체
+ */
 function handleOk(bvModalEvent) {
   bvModalEvent.preventDefault()
   handleSubmit(bvModalEvent)
 }
 
+/**
+ * 폼 제출 핸들러
+ */
 async function handleSubmit() {
   const formData = new FormData // 폼 데이터
   formData.append('password', password.value)
 
+  /**
+   * 서버로부터 게시글 삭제 작업 수행
+   *
+   * @type {Object} - 서버 응답 데이터 또는 에러 객체
+   * @property {any} data - 서버 응답 데이터
+   * @property {Error} error - 서버 에러 객체
+   */
   const { data, error } = await DataService.fetchDeleteAction(props.boardIdx, formData)
   if (error) {
     submitError.value = error
@@ -57,15 +77,10 @@ async function handleSubmit() {
     submitError.value = null
 
     modalShow.value = false
-    const modalElement = document.getElementById("modal-prevent-closing");
-    if (modalElement) {
-      modalElement.style.display = "none"; // 모달 숨기기
-    }
+    useHideElement('deleteModal');
     await router.push({name: 'Boards'});
   }
 }
-
-
 
 getBoard()
 </script>
@@ -81,6 +96,7 @@ getBoard()
         <b-button @click="modalShow = true" class="btn btn-danger font-weight-bold btn-sm">게시글 삭제</b-button>
         <router-link class="btn btn-secondary font-weight-bold btn-sm" :to="`/board/modify/${boardData.board.boardIdx}`">게시글 수정</router-link>
       </div>
+      <Comment v-if="boardData" :comments="boardData.board.comments"/>
     </BoardDetail>
   </template>
 
@@ -95,10 +111,10 @@ getBoard()
   </template>
 
   <!-- 모달 -->
-  <b-modal id="modal-prevent-closing" ref="modal" title="게시글 삭제 요청"
+  <b-modal id="deleteModal" ref="modal" title="게시글 삭제 요청"
     v-model="modalShow"
-    @show="resetModal"
-    @hidden="resetModal"
+    @show="resetPassword"
+    @hidden="resetPassword"
     @ok="handleOk"
     cancel-title="취소하기"
     ok-title="삭제하기">
