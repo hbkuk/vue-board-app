@@ -1,6 +1,6 @@
 <script setup>
 import dateUtils from "@/script/DateUtils";
-import {defineProps} from "vue";
+import {defineProps, ref} from "vue";
 import Comment from "@/components/Comment.vue";
 
 const props = defineProps({
@@ -49,13 +49,11 @@ const props = defineProps({
               <hr class="my-4"/>
             </div>
           </article>
-          <div class="d-flex justify-content-between">
-            <router-link class="btn btn-danger font-weight-bold btn-sm" :to="`/board/delete/${boardData.board.boardIdx}`">게시글 삭제</router-link>
-            <router-link class="btn btn-secondary font-weight-bold btn-sm" :to="`/board/modify/${boardData.board.boardIdx}`">게시글 수정</router-link>
-          </div>
+          <slot></slot>
           <Comment v-if="boardData.comments" :comments="boardData.comments"/>
         </div>
       </div>
     </div>
   </div>
+
 </template>

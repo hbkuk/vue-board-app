@@ -1,6 +1,6 @@
 import {useGetRequest} from "@/composable/request/getRequest";
 import {useHttpRequest} from "@/composable/request/httpRequest";
-import {multipart} from "@/composable/request/headers";
+import {formUrlencoded, json, multipart} from "@/composable/request/headers";
 import {HttpMethod} from "@/composable/request/httpMethod";
 
 
@@ -67,6 +67,16 @@ const DataService = {
      */
     fetchModifyAction(boardIdx, formData) {
         return useHttpRequest(HttpMethod.PUT,`/api/board/${boardIdx}`, formData, multipart)
+    },
+
+    /**
+     * 게시물 삭제을 위한 요청 함수
+     *
+     * @param boardIdx 게시물 번호
+     * @param formData 요청 데이터
+     */
+    fetchDeleteAction(boardIdx, formData) {
+        return useHttpRequest(HttpMethod.DELETE,`/api/board/${boardIdx}`, formData, formUrlencoded)
     },
 
     /**

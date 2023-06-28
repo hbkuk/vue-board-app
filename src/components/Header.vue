@@ -24,7 +24,6 @@
             <a class="nav-link" href="#"><i class="fa-regular fa-user"></i></a>
           </li>
         </ul>
-
       </div>
     </div>
   </nav>
