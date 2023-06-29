@@ -6,17 +6,22 @@ import {useModifySubmitForm} from "@/composable/submitForm/modifySubmitForm";
 import {defineProps, ref} from "vue";
 import Error from "@/components/Error.vue";
 import Spinner from "@/components/Spinner.vue";
-import SubmitErr from "@/components/SubmitErr.vue";
 import {store} from "@/script/store";
-import router from "@/router/router";
+import {useResponseHandler} from "@/composable/response/responseHandler";
+import {RequestSuccessCode} from "@/composable/response/RequestSuccessCode";
 
-const modifyViewInfo = ref(null) /** 게시글 수정 정보를 담는 반응성 객체 */
-const modifyViewError = ref(null) /** 게시글 수정 정보를 가져올때 발생하는 에러를 담는 반응성 객체 */
+const modifyViewInfo = ref(null)
+/** 게시글 수정 정보를 담는 반응성 객체 */
+const modifyViewError = ref(null)
+/** 게시글 수정 정보를 가져올때 발생하는 에러를 담는 반응성 객체 */
 
-const submitData = ref(null) /** 게시글 수정 후 반환된 데이터를 담는 반응성 객체 */
-const submitError = ref(null) /** 게시글 수정 후 반환된 에러를 담는 반응성 객체 */
+const submitData = ref(null)
+/** 게시글 수정 후 반환된 데이터를 담는 반응성 객체 */
+const submitError = ref(null)
+/** 게시글 수정 후 반환된 에러를 담는 반응성 객체 */
 
-const props = defineProps({ /** 전달받은 속성 */
+const props = defineProps({
+  /** 전달받은 속성 */
   boardIdx: String,
 });
 
@@ -26,13 +31,14 @@ const props = defineProps({ /** 전달받은 속성 */
  * @returns {Promise<void>}
  */
 async function getModifyViewInfo() {
-  const { data, error } = await DataService.fetchModifyView(props.boardIdx)
-  if(data) {
-    modifyViewInfo.value = data
+  const [response] = await Promise.all([DataService.fetchModifyView(props.boardIdx)]);
+  const result = await useResponseHandler(response, RequestSuccessCode.GET);
+
+  if (result && result.type === "data") {
+    modifyViewInfo.value = result.data
     modifyViewError.value = null
-  }
-  if(error) {
-    modifyViewError.value = error
+  } else {
+    modifyViewError.value = result?.error;
   }
 }
 
@@ -42,16 +48,10 @@ const {board, useInitializeFormData, useHandleFileUpload, useDeleteFileByFileIdx
 
 /** 서버 데이터 전송 처리하는 함수 */
 async function submitForm() {
-  const {data, error} = await DataService.fetchModifyAction(board.value.boardIdx, getSubmitFormData())
-  if (data) {
-    submitData.value = data
-    submitError.value = null
-    await router.push({name: 'Board', params: {boardIdx: data.boardIdx}});
-  }
-  if (error) {
-    submitError.value = error
-    useInitializeFormData()
-  }
+  const [response] = await Promise.all([DataService.fetchModifyAction(board.value.boardIdx, getSubmitFormData())])
+  const result = await useResponseHandler(response, RequestSuccessCode.PUT, 'Board', {boardIdx: props.boardIdx});
+  submitError.value = result?.error;
+  useInitializeFormData()
 }
 
 getModifyViewInfo()
@@ -64,7 +64,7 @@ getModifyViewInfo()
 
   <!-- 조건부 렌더링: 게시글 작성 실패로 인한 Error Message -->
   <template v-if="submitError !== null && submitError.error !== null">
-    <SubmitErr :submitError="submitError"/>
+    <Error :error="submitError"/>
   </template>
 
   <!-- 조건부 렌더링 1: 서버 통신 success -->
@@ -72,7 +72,8 @@ getModifyViewInfo()
     <div class="container-fluid bg-white">
       <div class="container">
         <div class="d-flex flex-row mt-3 mb-3">
-          <button type="button" class="btn btn-secondary btn-sm" @click="$router.push({name: 'Boards'})"><i lass="fa-solid fa-arrow-left"></i> 나가기
+          <button type="button" class="btn btn-secondary btn-sm" @click="$router.push({name: 'Boards'})"><i
+              lass="fa-solid fa-arrow-left"></i> 나가기
           </button>
         </div>
         <div class="row">
@@ -90,7 +91,8 @@ getModifyViewInfo()
                       </div>
                       <span class="badge bg-warning text-dark me-2 badge-lg">수정일시</span>
                       <div class="d-flex me-2">
-                        <div class="text-secondary text-lg">{{ board.modDate !== null ? dateUtils.formatDate(board.modDate) : '없음'}}
+                        <div class="text-secondary text-lg">
+                          {{ board.modDate !== null ? dateUtils.formatDate(board.modDate) : '없음' }}
                         </div>
                       </div>
                       <span class="badge bg-info text-dark me-2 badge-lg">조회수</span>
@@ -158,7 +160,8 @@ getModifyViewInfo()
                       </div>
 
                       <div class="d-grid gap-2 mt-4">
-                        <button type="button" class="btn btn-primary" @click="submitForm"><i class="fa-regular fa-circle-check"></i> 등록
+                        <button type="button" class="btn btn-primary" @click="submitForm"><i
+                            class="fa-regular fa-circle-check"></i> 등록
                         </button>
                       </div>
                     </form>
@@ -179,6 +182,6 @@ getModifyViewInfo()
 
   <!-- 조건부 렌더링 3: 서버 통신 delay -->
   <template v-else>
-    <Spinner msg="게시글 가져오는 중 ..." />
+    <Spinner msg="게시글 가져오는 중 ..."/>
   </template>
 </template>

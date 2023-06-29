@@ -7,7 +7,14 @@ import {ref} from 'vue'
  * @returns {object} 게시글 작성 폼 관련 함수와 상태를 포함한 객체
  */
 export function useWriteSubmitForm() {
-    const board = ref({categoryIdx: null}) // 게시글 데이터
+    const board = ref({
+        categoryIdx: 10,
+        title: "최초 제목1",
+        writer: "테스터1",
+        content: "최초 내용1",
+        password: "qudrnr132!"
+    })
+    //const board = ref({categoryIdx: null}) // 게시글 데이터
     const formData = ref(new FormData()); // 폼 데이터
 
     /**

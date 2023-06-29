@@ -12,6 +12,8 @@ import Error from "@/components/Error.vue";
 import Spinner from "@/components/Spinner.vue";
 import {useUpdateUrl} from "@/composable/updateUrl";
 import {useUpdateSessionStorage} from "@/composable/updateSessionStorage";
+import {RequestSuccessCode} from "@/composable/response/RequestSuccessCode";
+import {useResponseHandler} from "@/composable/response/responseHandler";
 
 
 const boardsData = ref(null) /** 게시글 목록을 담는 반응성 객체 */
@@ -31,19 +33,21 @@ Object.assign(initialCondition.value, useInitialCondition(router, sessionStorage
 /**
  * 게시판 검색을 실행하는 함수
  *
- * @param {Record<string, any>} condition - 검색 조건 객체
+ * @param {Record<string, any>} searchCondition - 검색 조건 객체
+ *                                             (예: { startDate: '2022-01-01', endDate: '2022-12-31' })
  * @returns {Promise<void>}
  */
 async function searchBoards(condition) {
-  const {data, error} = await DataService.fetchBoards(condition)
-  if(data) {
-    boardsData.value = data
+  const [response] = await Promise.all([DataService.fetchBoards(condition)])
+  const result = await useResponseHandler(response, RequestSuccessCode.GET);
+
+  if (result && result.type === "data") {
+    boardsData.value = result.data
     boardsError.value = null
     useUpdateUrl("/boards", condition);
     useUpdateSessionStorage('condition', condition);
-  }
-  if(error) {
-    boardsError.value = error
+  } else {
+    boardsError.value = result?.error;
     useUpdateUrl("/boards", initialCondition.value);
     useUpdateSessionStorage('condition', initialCondition.value);
   }

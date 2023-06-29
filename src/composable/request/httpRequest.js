@@ -9,18 +9,17 @@ import axios from 'axios'
  * @param {Object} requestHeader - 요청 헤더
  * @returns {object} - 응답 데이터 및 에러 객체
  */
-export async function useHttpRequest(method, url, formData = null, requestHeader= null) {
-    try {
-        const response = await axios.request({
-            method,
-            url,
-            data: formData,
-            headers: requestHeader,
-        });
-        return { data: response.data, error: null };
-    } catch (err) {
-        console.log(err);
-        return { data: null, error: err.response.data };
-    }
+export function useHttpRequest(method, url, formData = null, requestHeader = null) {
+    return axios.request({
+                method,
+                url,
+                data: formData,
+                headers: requestHeader,
+            }).then(response => {
+                return response;
+            }).catch(error => {
+                console.log(error);
+                return error;
+            });
 }
 

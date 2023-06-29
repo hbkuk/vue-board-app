@@ -4,10 +4,10 @@ import WelcomeBanner from "@/components/WelcomeBanner.vue";
 import {useWriteSubmitForm} from "@/composable/submitForm/writeSubmitForm";
 import Spinner from "@/components/Spinner.vue";
 import Error from "@/components/Error.vue";
-import SubmitErr from "@/components/SubmitErr.vue";
 import {store} from "@/script/store";
 import {ref} from "vue";
-import router from "@/router/router";
+import {useResponseHandler} from "@/composable/response/responseHandler";
+import {RequestSuccessCode} from "@/composable/response/RequestSuccessCode";
 
 const writeViewInfo = ref(null)
 /** 게시글 작성을 위한 데이터를 담는 반응성 객체 */
@@ -24,13 +24,13 @@ const submitError = ref(null) /** 게시글 작성 후 반환된 에러를 담�
  * @returns {Promise<void>}
  */
 async function getWriteViewInfo() {
-  const {data, error} = await DataService.fetchWriteView()
-  if (data) {
-    writeViewInfo.value = data
-    writeViewError.value = null
-  }
-  if (error) {
-    writeViewError.value = error
+  const [response] = await Promise.all([DataService.fetchWriteView()]);
+  const result = await useResponseHandler(response, RequestSuccessCode.GET);
+
+  if (result && result.type === "data") {
+    writeViewInfo.value = result.data;
+  } else {
+    writeViewError.value = result?.error;
   }
 }
 
@@ -40,16 +40,11 @@ const {board, useInitializeFormData, useHandleFileUpload, getSubmitFormData}
 
 /** 서버 데이터 전송 처리하는 함수 */
 async function submitForm() {
-  const {data, error} = await DataService.fetchWriteAction(getSubmitFormData())
-  if (data) {
-    submitData.value = data
-    submitError.value = null
-    await router.push({name: 'Board', params: {boardIdx: data.boardIdx}});
-  }
-  if (error) {
-    submitError.value = error
-    useInitializeFormData()
-  }
+  const [response] = await Promise.all([DataService.fetchWriteAction(getSubmitFormData())])
+  const result = await useResponseHandler(response, RequestSuccessCode.POST, 'Board', {boardIdx: response.data?.boardIdx});
+  submitError.value = result?.error;
+  useInitializeFormData()
+
 }
 
 getWriteViewInfo();
@@ -62,7 +57,7 @@ getWriteViewInfo();
 
   <!-- 조건부 렌더링: 게시글 작성 실패로 인한 Error Message -->
   <template v-if="submitError !== null && submitError.error !== null">
-    <SubmitErr :submitError="submitError"/>
+    <Error :error="submitError"/>
   </template>
 
   <!-- 조건부 렌더링 1: 서버 통신 success -->

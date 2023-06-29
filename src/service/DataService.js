@@ -1,7 +1,7 @@
 import {useGetRequest} from "@/composable/request/getRequest";
 import {useHttpRequest} from "@/composable/request/httpRequest";
-import {formUrlencoded, json, multipart} from "@/composable/request/headers";
-import {HttpMethod} from "@/composable/request/httpMethod";
+import {formUrlencoded, json, multipart} from "@/composable/request/Headers";
+import {HttpMethod} from "@/composable/request/HttpMethod";
 
 
 /**

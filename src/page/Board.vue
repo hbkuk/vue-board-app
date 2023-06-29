@@ -5,17 +5,15 @@ import {defineProps, ref} from "vue";
 import BoardDetail from "@/components/BoardArticle.vue";
 import Spinner from "@/components/Spinner.vue";
 import Error from "@/components/Error.vue";
-import router from "@/router/router";
 import Comment from "@/components/Comment.vue";
-import {useHideElement} from "@/composable/elementControll/hideElement";
 import {useDeleteBoardModal} from "@/composable/modal/deleteBoardModal";
+import {RequestSuccessCode} from "@/composable/response/RequestSuccessCode";
+import {useResponseHandler} from "@/composable/response/responseHandler";
 
-const boardData = ref(null)
-/** 게시글 정보를 담는 반응성 객체 */
-const boardError = ref(null)
-/** 게시글 정보를 가져올때 발생하는 에러를 담는 반응성 객체 */
+const boardData = ref(null) /** 게시글 정보를 담는 반응성 객체 */
+const boardError = ref(null) /** 게시글 정보를 가져올때 발생하는 에러를 담는 반응성 객체 */
 
-const props = defineProps({ /** 전달받은 속성 */
+const props = defineProps({
   boardIdx: {
     type: String,
     default: '',
@@ -28,18 +26,17 @@ const props = defineProps({ /** 전달받은 속성 */
  * @returns {Promise<void>}
  */
 async function getBoard() {
-  const {data, error} = await DataService.fetchBoard(props.boardIdx)
-  if (data) {
-    boardData.value = data
-    boardError.value = null
-  }
-  if (error) {
-    boardError.value = error
+  const [response] = await Promise.all([DataService.fetchBoard(props.boardIdx)]);
+  const result = await useResponseHandler(response, RequestSuccessCode.GET);
+
+  if (result && result.type === "data") {
+    boardData.value = result.data;
+  } else {
+    boardError.value = result?.error;
   }
 }
 
-const submitData = ref(null)
-/** 게시글 삭제 후 반환된 데이터를 담는 반응성 객체 */
+const submitData = ref(null) /** 게시글 삭제 후 반환된 데이터를 담는 반응성 객체 */
 const submitError = ref(null) /** 게시글 삭제 후 반환된 에러를 담는 반응성 객체 */
 
 /** useDeleteBoardModal 컴포저블을 통해 게시글 삭제에 필요한 함수와 상태를 가져옴 */
@@ -57,30 +54,15 @@ function handleOk(bvModalEvent) {
 }
 
 /**
- * 게시글 삭제 제출 함수
+ * 게시글 삭제 함수
  */
 async function handleSubmit() {
-  const formData = new FormData // 폼 데이터
+  const formData = new FormData
   formData.append('password', password.value)
 
-  /**
-   * 서버로부터 게시글 삭제 작업 수행
-   *
-   * @type {Object} - 서버 응답 데이터 또는 에러 객체
-   * @property {any} data - 서버 응답 데이터
-   * @property {Error} error - 서버 에러 객체
-   */
-  const {data, error} = await DataService.fetchDeleteAction(props.boardIdx, formData)
-  if (error) {
-    submitError.value = error
-  } else {
-    submitData.value = data
-    submitError.value = null
-
-    modalShow.value = false
-    useHideElement('deleteModal');
-    await router.push({name: 'Boards'});
-  }
+  const [response] = await Promise.all([DataService.fetchDeleteAction(props.boardIdx, formData)])
+  const result = await useResponseHandler(response, RequestSuccessCode.DELETE, 'Boards');
+  submitError.value = result?.error;
 }
 
 
@@ -153,13 +135,8 @@ getBoard()
         />
       </b-form-group>
     </form>
-    <div v-if="submitError">
-      <div
-        class="alert alert-danger text-center"
-        role="alert"
-      >
-        {{ submitError.detail }}
-      </div>
+    <div v-if="submitError !== null">
+      <Error :error="submitError"/>
     </div>
   </b-modal>
 </template>
